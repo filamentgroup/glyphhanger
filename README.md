@@ -74,6 +74,10 @@ python setup.py install
 
 GlyphHanger uses Mocha for testing.
 
+`npm test` will run the tests.
+
+Or, alternatively:
+
 `./node_modules/mocha/bin/mocha` (or just `mocha` if you already have it installed globally with `npm install -g mocha`).
 
 ## Limitations
