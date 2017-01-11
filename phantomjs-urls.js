@@ -1,6 +1,6 @@
 "use strict";
 var webpage = require( "webpage" );
-var GlyphHanger = require( "./logger.js" );
+var GlyphHanger = require( "./glyphhanger.js" );
 var Rsvp = require( "rsvp" );
 var args = require( "system" ).args;
 
@@ -11,26 +11,11 @@ function spiderForUrls( url ) {
 
 	return new Rsvp.Promise(function( resolve, reject ) {
 		page.open( url, function( status ) {
-			if ( status === "success" ) {
+			if ( status === "success" && page.injectJs( "glyphhanger-spider.js" ) ) {
 				resolve( page.evaluate( function() {
-					function normalizeURL( url ) {
-						var a = document.createElement( "a" );
-						a.href = url;
-						return a.href;
-					}
+					var ghs = new GlyphHangerSpider();
 
-					var urls = [];
-
-					Array.prototype.slice.call( document.querySelectorAll( "a[href]" ) ).forEach(function( node ) {
-						var url = normalizeURL( node.getAttribute( "href" ) );
-
-						// Local URLs only
-						if( url.indexOf( location.host ) > -1 ) {
-							urls.push( url );
-						}
-					});
-
-					return urls;
+					return ghs.parse( document.body );
 				}));
 			} else {
 				reject( url, status );

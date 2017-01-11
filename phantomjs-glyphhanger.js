@@ -1,6 +1,6 @@
 "use strict";
 var webpage = require( "webpage" );
-var GlyphHanger = require( "./logger.js" );
+var GlyphHanger = require( "./glyphhanger.js" );
 var Rsvp = require( "rsvp" );
 var args = require( "system" ).args;
 
@@ -15,7 +15,7 @@ function requestUrl( url ) {
 
 	return new Rsvp.Promise(function( resolve, reject ) {
 		page.open( url, function( status ) {
-			if ( status === "success" && page.injectJs( "logger.js" ) ) {
+			if ( status === "success" && page.injectJs( "glyphhanger.js" ) ) {
 				resolve( page.evaluate( function() {
 
 					var hanger = new GlyphHanger();

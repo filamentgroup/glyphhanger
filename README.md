@@ -70,6 +70,16 @@ cd brotli
 python setup.py install
 ```
 
+## Testing
+
+GlyphHanger uses Mocha for testing.
+
+`./node_modules/mocha/bin/mocha` (or just `mocha` if you already have it installed globally with `npm install -g mocha`).
+
+## Limitations
+
+* Pseudo-element CSS `content` is not parsed.
+
 ## Example
 
 ```
@@ -79,5 +89,5 @@ python setup.py install
  !$&()+,-./0123456789:?@ABCDEFGHIJLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz»é–—’“”→★
 
 > pyftsubset sourcesanspro-regular.ttf --text-file=glyphhanger_zachleat_output --flavor=woff
-# Reduced the 166KB .ttf font file to a 8KB .woff webfont file.
+# Reduced the 166KB .ttf font file to an 8KB .woff webfont file.
 ``` 

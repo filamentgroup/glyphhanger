@@ -28,5 +28,10 @@
     "minimist": "^1.2.0",
     "phantomjs-prebuilt": "^2.1.14",
     "rsvp": "^3.3.3"
+  },
+  "devDependencies": {
+    "jsdom": "^9.9.1",
+    "jsdom-global": "^2.1.1",
+    "mocha": "^3.2.0"
   }
 }
