@@ -61,6 +61,8 @@ Don’t use verbose mode here, we want to save the output to a file.
 
 ### Installing `pyftsubset`
 
+See [https://github.com/fonttools/fonttools](https://github.com/fonttools/fonttools).
+
 ```
 pip install fonttools
 
