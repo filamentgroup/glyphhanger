@@ -14,6 +14,9 @@ npm install -g glyphhanger
 # local file
 > glyphhanger ./test.html
 
+# output Unicode code points (this will be the default mode in v2.0)
+> glyphhanger ./test.html --unicodes
+
 # remote URL
 > glyphhanger http://example.com
 
@@ -49,7 +52,7 @@ Default `--spider-limit` is 10. Increasing this will increase the amount of time
 Don’t use verbose mode here, we want to save the output to a file.
 
 ```
-> glyphhanger ./test.html > glyphhanger_output
+> glyphhanger ./test.html --unicodes > glyphhanger_output
 > pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff
 
 # or output WOFF2 (see additional installation instructions below)
