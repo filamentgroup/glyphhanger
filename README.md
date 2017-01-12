@@ -50,10 +50,10 @@ Don’t use verbose mode here, we want to save the output to a file.
 
 ```
 > glyphhanger ./test.html > glyphhanger_output
-> pyftsubset FONTFILENAME.ttf --text-file=glyphhanger_output --flavor=woff
+> pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff
 
 # or output WOFF2 (see additional installation instructions below)
-> pyftsubset FONTFILENAME.ttf --text-file=glyphhanger_output --flavor=woff2
+> pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff2
 
 # Remove temporary file
 > rm glyphhanger_output
@@ -86,14 +86,28 @@ Or, alternatively:
 
 * Pseudo-element CSS `content` is not parsed.
 
-## Example
+## Example using Unicode code points
+
+```
+> glyphhanger https://www.zachleat.com/web/ --unicodes --spider --spider-limit=5 > glyphhanger_zachleat_output
+
+> cat glyphhanger_zachleat_output
+ !$&()+,-./0123456789:?@ABCDEFGHIJLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz»é–—’“”→★
+
+> pyftsubset sourcesanspro-regular.ttf --unicodes-file=glyphhanger_zachleat_output --flavor=woff
+# Reduced the 166KB .ttf font file to an 8KB .woff webfont file.
+``` 
+
+_(See [Issue #4](https://github.com/filamentgroup/glyphhanger/issues/4)  on why Unicode code points are better)_
+
+### Deprecated Example using String values
 
 ```
 > glyphhanger https://www.zachleat.com/web/ --spider --spider-limit=5 > glyphhanger_zachleat_output
 
-> glyphhanger_zachleat_output
+> cat glyphhanger_zachleat_output
  !$&()+,-./0123456789:?@ABCDEFGHIJLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz»é–—’“”→★
 
-> pyftsubset sourcesanspro-regular.ttf --text-file=glyphhanger_zachleat_output --flavor=woff
+> pyftsubset sourcesanspro-regular.ttf --unicodes-file=glyphhanger_zachleat_output --flavor=woff
 # Reduced the 166KB .ttf font file to an 8KB .woff webfont file.
 ``` 

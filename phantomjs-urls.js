@@ -29,6 +29,7 @@ var promises = [];
 // Remove the script name argument
 args.shift();
 
+// The remaining arguments are urls
 args.forEach(function( url ) {
 	promises.push( spiderForUrls( url ) );
 });

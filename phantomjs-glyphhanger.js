@@ -1,6 +1,6 @@
 "use strict";
 var webpage = require( "webpage" );
-var GlyphHanger = require( "./glyphhanger.js" );
+var CharacterSet = require( "characterset" );
 var Rsvp = require( "rsvp" );
 var args = require( "system" ).args;
 
@@ -15,13 +15,13 @@ function requestUrl( url ) {
 
 	return new Rsvp.Promise(function( resolve, reject ) {
 		page.open( url, function( status ) {
-			if ( status === "success" && page.injectJs( "glyphhanger.js" ) ) {
+			if ( status === "success" && page.injectJs( "node_modules/characterset/lib/characterset.js" ) && page.injectJs( "glyphhanger.js" ) ) {
 				resolve( page.evaluate( function() {
 
 					var hanger = new GlyphHanger();
 					hanger.init( document.body );
 
-					return hanger.getGlyphs().join( "" );
+					return hanger.getGlyphs();
 				}) );
 			} else {
 				reject( url, status );
@@ -30,18 +30,33 @@ function requestUrl( url ) {
 	});
 }
 
-var combined = new GlyphHanger();
+var combined = new CharacterSet();
 var promises = [];
+
+/*
+ *Arguments List
+
+ 1. script name
+ 2. isVerbose ("true" or "false")
+ 3. output unicodes
+ 4. whitelisted characters
+ 5 and up. urls
+*/
 
 // Remove the script name argument
 args.shift();
 
 // Verbose
-
 var isVerbose = args.shift() === "true";
 
+// Output code points
+var isCodePoints = args.shift() === "true";
+
 // Whitelist
-combined.saveGlyphs( args.shift() );
+var whitelist = args.shift();
+if( whitelist.length ) {
+	combined = combined.union( new CharacterSet( whitelist ) );
+}
 
 // Add URLS
 args.forEach(function( url ) {
@@ -52,12 +67,23 @@ args.forEach(function( url ) {
 });
 
 Rsvp.all( promises ).then( function( results ) {
-	results.forEach( combined.saveGlyphs.bind( combined ) );
+	results.forEach( function( result ) {
+		combined.add.apply( combined, result );
+	});
 
 	if( isVerbose ) {
-		console.log( pluginName + " output:" );
+		console.log( pluginName + " output (" + combined.getSize() + "):" );
 	}
-	console.log( combined.getGlyphs().join( "" ) );
+
+	if( isCodePoints ) {
+		console.log( combined.toArray().map(function( code ) {
+				return 'U+' + code.toString(16);
+			}).join(',') );
+	} else {
+		console.log( combined.toArray().map(function( code ) {
+				return String.fromCharCode( code );
+			}).join('') );
+	}
 
 	phantom.exit( 0 );
 }).catch(function( error ) {

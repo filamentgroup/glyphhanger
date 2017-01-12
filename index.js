@@ -31,6 +31,8 @@ if( !argv._ || !argv._.length ) {
 	out.push( "       A list of whitelist characters." );
 	out.push( "  --US_ASCII" );
 	out.push( "       Shortcut for whitelisting the printable US-ASCII characters" );
+	out.push( "  --unicodes" );
+	out.push( "       Output code points instead of string values (better compatibility)." );
 	out.push( "  --verbose" );
 	out.push( "  --spider" );
 	out.push( "       Gather urls from the main page and navigate those URLs." );
@@ -43,6 +45,9 @@ if( !argv._ || !argv._.length ) {
 
 // Verbose mode
 childArgs.push( argv.verbose ? true : false );
+
+// Output code points
+childArgs.push( argv.unicodes ? true : false );
 
 // Whitelisted characters
 var whitelist = "";

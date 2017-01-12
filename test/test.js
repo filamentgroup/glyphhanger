@@ -13,7 +13,7 @@ describe( "glyphhanger", function() {
 		gh.init( div );
 
 		it( "should match", function() {
-			assert.equal( "abc", gh.getGlyphs().join( "" ) );
+			assert.equal( "abc", gh.toString() );
 		});
 	});
 
@@ -25,7 +25,7 @@ describe( "glyphhanger", function() {
 		gh.init( div );
 
 		it( "should match", function() {
-			assert.equal( "bcd", gh.getGlyphs().join( "" ) );
+			assert.equal( "bcd", gh.toString() );
 		});
 	});
 
@@ -37,7 +37,7 @@ describe( "glyphhanger", function() {
 		gh.init( div );
 
 		it( "should match", function() {
-			assert.equal( "0123456789bcdefg", gh.getGlyphs().join( "" ) );
+			assert.equal( "0123456789bcdefg", gh.toString() );
 		});
 	});
 
@@ -50,29 +50,41 @@ describe( "glyphhanger", function() {
 		gh.init( div );
 
 		it( "should match", function() {
-			assert.equal( "bcdefgh", gh.getGlyphs().join( "" ) );
+			assert.equal( "bcdefgh", gh.toString() );
 		});
 	});
 
-	describe( "Emoji", function() {
+	describe( "Surrogate Pair", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "😎";
 
 		var gh = new GlyphHanger();
 		gh.init( div );
 
-		it( "should match", function() {
-			assert.equal( "😎", gh.getGlyphs().join( "" ) );
+		it( "has a surrogate pair", function() {
+			assert.equal( "\\uD83D\\uDE0E", gh.toString() );
+		});
+	});
+
+	describe( "Multiple Surrogate Pairs", function() {
+		var div = document.createElement( "div" );
+		div.innerHTML = "😎💩";
+
+		var gh = new GlyphHanger();
+		gh.init( div );
+
+		it( "has two surrogate pairs", function() {
+			assert.equal( "\\uD83D\\uDCA9\\uD83D\\uDE0E", gh.toString() );
 		});
 	});
 });
 
 describe( "glyphhanger-spider", function() {
-	describe( "Find one links", function() {
+	describe( "Single Link", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "<a href='firstlink.html'>Test</a>";
 
-		it( "should match", function() {
+		it( "found one link", function() {
 			var gh = new GlyphHangerSpider();
 			var urls = gh.parse( div );
 
@@ -80,11 +92,11 @@ describe( "glyphhanger-spider", function() {
 		});
 	});
 
-	describe( "Find two links", function() {
+	describe( "Multiple links", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "<a href='firstlink.html'>Test</a><a href='secondlink.html'>Test</a>";
 
-		it( "should match", function() {
+		it( "found two links", function() {
 			var gh = new GlyphHangerSpider();
 			var urls = gh.parse( div );
 

@@ -1,15 +1,15 @@
 (function( root, factory ) {
 		if( typeof exports === "object" && typeof exports.nodeName !== "string" ) {
 			// CommonJS
-			module.exports = factory();
+			module.exports = factory( require( "characterset" ) );
 		} else {
 			// Browser
-			root.GlyphHanger = factory();
+			root.GlyphHanger = factory( root.CharacterSet );
 		}
-}( this, function() {
+}( this, function( CharacterSet ) {
 
 	var GH = function() {
-		this.glyphs = {};
+		this.set = new CharacterSet();
 	};
 
 	GH.prototype.init = function( parentNode ) {
@@ -33,29 +33,16 @@
 		return all;
 	};
 
-	GH.prototype.saveGlyph = function( glyph ) {
-		// glyph = glyph.trim();
-		if( !( glyph in this.glyphs ) ) {
-			this.glyphs[ glyph ] = 0;
-		}
-
-		this.glyphs[ glyph ]++;
-	}
-
 	GH.prototype.saveGlyphs = function( text ) {
-		var split = text.split( "" );
-		split.forEach( this.saveGlyph.bind( this ) );
-	};
-
-	GH.prototype.getReport = function() {
-		var str = [];
-		var keys = this.getGlyphs();
-		str.push( keys.length + " glyphs: " + keys.join( "" ) );
-		return str.join( "\n" );
+		this.set = this.set.union( new CharacterSet( text ) );
 	};
 
 	GH.prototype.getGlyphs = function() {
-		return Object.keys( this.glyphs ).sort();
+		return this.set.toArray();
+	};
+
+	GH.prototype.toString = function() {
+		return this.set.toString();
 	};
 
 	return GH;
