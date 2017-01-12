@@ -3,6 +3,9 @@ require( "jsdom-global" )();
 var assert = require( "assert" );
 var GlyphHanger = require( "../glyphhanger.js" );
 var GlyphHangerSpider = require( "../glyphhanger-spider.js" );
+var path = require( "path" );
+var phantomjs = require( "phantomjs-prebuilt" );
+var childProcess = require( "child_process" );
 
 describe( "glyphhanger", function() {
 	describe( "Simple node", function() {
@@ -77,6 +80,19 @@ describe( "glyphhanger", function() {
 			assert.equal( "\\uD83D\\uDCA9\\uD83D\\uDE0E", gh.toString() );
 		});
 	});
+
+	describe( "integration test: onload and DOMContentLoaded content", function() {
+		var args = [ path.join( __dirname, "..", "phantomjs-glyphhanger.js" ), false, false, "", path.join( __dirname, "test.html" ) ];
+
+		it( "should have 9 distinct glyphs", function( done ) {
+			this.timeout( 6000 );
+			childProcess.execFile( phantomjs.path, args, function( error, stdout, stderr ) {
+
+				assert.equal( "abcdefghi", stdout.trim() );
+				done();
+			});
+		})
+	});
 });
 
 describe( "glyphhanger-spider", function() {
@@ -102,5 +118,24 @@ describe( "glyphhanger-spider", function() {
 
 			assert.deepEqual( [ "firstlink.html", "secondlink.html" ], urls );
 		});
+	});
+
+	describe( "Integration test: find links", function() {
+		var args = [ path.join( __dirname, "..", "phantomjs-urls.js" ), path.join( __dirname, "urls.html" ) ];
+
+		it( "should have 3 links", function( done ) {
+			this.timeout( 6000 );
+			childProcess.execFile( phantomjs.path, args, function( error, stdout, stderr ) {
+
+				var expecting = [
+					"file://" + path.join( __dirname, "test.html" ),
+					"file://" + path.join( __dirname, "test2.html" ),
+					"file://" + path.join( __dirname, "test3.html" )
+				];
+
+				assert.equal( expecting.join( "\n" ), stdout.trim() );
+				done();
+			});
+		})
 	});
 });

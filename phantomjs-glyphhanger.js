@@ -7,23 +7,34 @@ var args = require( "system" ).args;
 var pluginName = "glyphhanger";
 
 function requestUrl( url ) {
-	var page = webpage.create();
-
-	page.onConsoleMessage = function( msg ) {
-		console.log( pluginName + " phantom console:", msg );
-	};
-
 	return new Rsvp.Promise(function( resolve, reject ) {
-		page.open( url, function( status ) {
-			if ( status === "success" && page.injectJs( "node_modules/characterset/lib/characterset.js" ) && page.injectJs( "glyphhanger.js" ) ) {
-				resolve( page.evaluate( function() {
+		var page = webpage.create();
 
+		page.onConsoleMessage = function( msg ) {
+			console.log( pluginName + " phantom console:", msg );
+		};
+
+		page.onLoadFinished = function( status ) {
+			if( status !== "success" ) {
+				reject( "onLoadFinished error", status );
+			}
+
+			if( page.injectJs( "node_modules/characterset/lib/characterset.js" ) &&
+					page.injectJs( "glyphhanger.js" ) ) {
+
+				resolve( page.evaluate( function() {
 					var hanger = new GlyphHanger();
 					hanger.init( document.body );
 
 					return hanger.getGlyphs();
 				}) );
 			} else {
+				reject( "injectJs error" );
+			}
+		};
+
+		page.open( url, function( status ) {
+			if( status !== "success" ) {
 				reject( url, status );
 			}
 		});

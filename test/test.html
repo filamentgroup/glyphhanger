@@ -1,11 +1,24 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-  </head>
-  <body>
-    This is a another test of the glyph logger x. ¯\_(ツ)_/¯
-  </body>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title></title>
+		<script>
+		window.addEventListener( "load", function() {
+			var div = document.createElement( "div" );
+			div.innerHTML = "def";
+			document.body.appendChild( div );
+		}, false );
+
+		window.addEventListener( "DOMContentLoaded", function() {
+			var div = document.createElement( "div" );
+			div.innerHTML = "ghi";
+			document.body.appendChild( div );
+		}, false );
+		</script>
+	</head>
+	<body>
+		abc
+	</body>
 </html>

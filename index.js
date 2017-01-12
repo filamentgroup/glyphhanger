@@ -4,7 +4,6 @@ var path = require( "path" );
 var phantomjs = require( "phantomjs-prebuilt" );
 var childProcess = require( "child_process" );
 var chalk = require( "chalk" );
-var binPath = phantomjs.path;
 var argv = require( "minimist" )( process.argv.slice(2) );
 
 var pluginName = "glyphhanger";
@@ -68,7 +67,7 @@ function phantomGlyphhanger( urls ) {
 		console.log( prefix + urls.join( "\n" + prefix ) );
 	}
 
-	childProcess.execFile( binPath, childArgs.concat( urls ), function( error, stdout, stderr ) {
+	childProcess.execFile( phantomjs.path, childArgs.concat( urls ), function( error, stdout, stderr ) {
 		if( error ) {
 			throw error;
 		}
@@ -80,7 +79,7 @@ function phantomGlyphhanger( urls ) {
 if( !argv.spider ) {
 	phantomGlyphhanger( argv._ );
 } else {
-	childProcess.execFile( binPath, urlsChildArgs, function( error, stdout, stderr ) {
+	childProcess.execFile( phantomjs.path, urlsChildArgs, function( error, stdout, stderr ) {
 		if( error ) {
 			throw error;
 		}
