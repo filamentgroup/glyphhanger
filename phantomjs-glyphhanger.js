@@ -30,7 +30,7 @@ function requestUrl( url ) {
 	});
 }
 
-var combined = new CharacterSet();
+var combinedCharacterSet = new CharacterSet();
 var promises = [];
 
 /*
@@ -55,7 +55,7 @@ var isCodePoints = args.shift() === "true";
 // Whitelist
 var whitelist = args.shift();
 if( whitelist.length ) {
-	combined = combined.union( new CharacterSet( whitelist ) );
+	combinedCharacterSet = combinedCharacterSet.union( new CharacterSet( whitelist ) );
 }
 
 // Add URLS
@@ -68,19 +68,19 @@ args.forEach(function( url ) {
 
 Rsvp.all( promises ).then( function( results ) {
 	results.forEach( function( result ) {
-		combined.add.apply( combined, result );
+		combinedCharacterSet.add.apply( combinedCharacterSet, result );
 	});
 
 	if( isVerbose ) {
-		console.log( pluginName + " output (" + combined.getSize() + "):" );
+		console.log( pluginName + " output (" + combinedCharacterSet.getSize() + "):" );
 	}
 
 	if( isCodePoints ) {
-		console.log( combined.toArray().map(function( code ) {
+		console.log( combinedCharacterSet.toArray().map(function( code ) {
 				return 'U+' + code.toString(16);
 			}).join(',') );
 	} else {
-		console.log( combined.toArray().map(function( code ) {
+		console.log( combinedCharacterSet.toArray().map(function( code ) {
 				return String.fromCharCode( code );
 			}).join('') );
 	}
