@@ -23,11 +23,15 @@
 			var url = this.normalizeURL( node.getAttribute( "href" ) );
 
 			// Local URLs only
-			if( url.indexOf( location.host ) > -1 ) {
+			if( url.indexOf( "mailto:" ) !== 0 && url.indexOf( location.host ) > -1 ) {
 				this.urls.push( url );
 			}
 		}.bind( this ));
 
+		return this.urls;
+	};
+
+	GHS.prototype.getUrls = function() {
 		return this.urls;
 	};
 

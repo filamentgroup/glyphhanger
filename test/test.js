@@ -102,7 +102,8 @@ describe( "glyphhanger-spider", function() {
 
 		it( "found one link", function() {
 			var gh = new GlyphHangerSpider();
-			var urls = gh.parse( div );
+			gh.parse( div );
+			var urls = gh.getUrls();
 
 			assert.deepEqual( [ "firstlink.html" ], urls );
 		});
@@ -114,9 +115,23 @@ describe( "glyphhanger-spider", function() {
 
 		it( "found two links", function() {
 			var gh = new GlyphHangerSpider();
-			var urls = gh.parse( div );
+			gh.parse( div );
+			var urls = gh.getUrls();
 
 			assert.deepEqual( [ "firstlink.html", "secondlink.html" ], urls );
+		});
+	});
+
+	describe( "Prune email links", function() {
+		var div = document.createElement( "div" );
+		div.innerHTML = "<a href='firstlink.html'>Test</a><a href='mailto:localhost@example.com'>Test</a>";
+
+		it( "did not find the email link", function() {
+			var gh = new GlyphHangerSpider();
+			gh.parse( div );
+			var urls = gh.getUrls();
+
+			assert.deepEqual( [ "firstlink.html" ], urls );
 		});
 	});
 

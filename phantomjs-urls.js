@@ -14,8 +14,9 @@ function spiderForUrls( url ) {
 			if ( status === "success" && page.injectJs( "glyphhanger-spider.js" ) ) {
 				resolve( page.evaluate( function() {
 					var ghs = new GlyphHangerSpider();
+					ghs.parse( document.body );
 
-					return ghs.parse( document.body );
+					return ghs.getUrls();
 				}));
 			} else {
 				reject( url, status );
