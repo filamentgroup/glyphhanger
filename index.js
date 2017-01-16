@@ -62,9 +62,11 @@ childArgs.push( whitelist );
 urlsChildArgs = urlsChildArgs.concat( argv._ );
 
 function phantomGlyphhanger( urls ) {
-	var prefix = pluginName + "-spider found: ";
+	var prefix = pluginName + "-spider found";
 	if( argv.verbose ) {
-		console.log( prefix + urls.join( "\n" + prefix ) );
+		urls.forEach(function( url, index ) {
+			console.log( prefix + " (" + index + "): " + url );
+		});
 	}
 
 	childProcess.execFile( phantomjs.path, childArgs.concat( urls ), function( error, stdout, stderr ) {
@@ -84,8 +86,7 @@ if( !argv.spider ) {
 			throw error;
 		}
 
-		var urls = stdout.split( "\n" );
-
-		phantomGlyphhanger( urls.slice( 0, argv[ 'spider-limit' ]  || 15 ) );
+		var urls = stdout.trim().split( "\n" );
+		phantomGlyphhanger( urls.slice( 0, argv[ 'spider-limit' ]  || 10 ) );
 	});
 }

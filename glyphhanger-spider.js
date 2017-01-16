@@ -10,6 +10,19 @@
 
 	var GHS = function() {
 		this.urls = [];
+		this.duplicates = {};
+	};
+
+	GHS.prototype.add = function( url ) {
+		if( !url ||
+			this.duplicates[ url ] ||
+			url.indexOf( "mailto:" ) === 0 || // is email link
+			url.indexOf( location.host ) === -1 ) { // is not a local link
+			return;
+		}
+
+		this.duplicates[ url ] = true;
+		this.urls.push( url );
 	};
 
 	GHS.prototype.normalizeURL = function( url ) {
@@ -22,10 +35,7 @@
 		Array.prototype.slice.call( parentNode.querySelectorAll( "a[href]" ) ).forEach(function( node ) {
 			var url = this.normalizeURL( node.getAttribute( "href" ) );
 
-			// Local URLs only
-			if( url.indexOf( "mailto:" ) !== 0 && url.indexOf( location.host ) > -1 ) {
-				this.urls.push( url );
-			}
+			this.add( url );
 		}.bind( this ));
 
 		return this.urls;

@@ -9,6 +9,11 @@ var pluginName = "glyphhanger-spider";
 function spiderForUrls( url ) {
 	var page = webpage.create();
 
+	// Careful with this, we rely on stdout for return data in index.js
+	// page.onConsoleMessage = function( msg ) {
+	// 	console.log( pluginName + " phantom console:", msg );
+	// };
+
 	return new Rsvp.Promise(function( resolve, reject ) {
 		page.open( url, function( status ) {
 			if ( status === "success" && page.injectJs( "glyphhanger-spider.js" ) ) {
@@ -36,9 +41,13 @@ args.forEach(function( url ) {
 });
 
 Rsvp.all( promises ).then( function( results ) {
-	console.log( results.map(function( result ) {
-		return result.join( "\n" );
-	}).join( "\n" ) );
+	var urls = [];
+
+	results.forEach(function( result ) {
+		urls = urls.concat( result );
+	});
+
+	console.log( urls.join( "\n" ) );
 
 	phantom.exit( 0 );
 }).catch(function( error ) {
