@@ -65,7 +65,7 @@ function phantomGlyphhanger( urls ) {
 	var prefix = pluginName + "-spider found";
 	if( argv.verbose ) {
 		urls.forEach(function( url, index ) {
-			console.log( prefix + " (" + index + "): " + url );
+			console.log( prefix + " (" + ( index + 1 ) + "): " + url );
 		});
 	}
 
