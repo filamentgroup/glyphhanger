@@ -55,8 +55,15 @@ Don’t use verbose mode here, we want to save the output to a file.
 > glyphhanger ./test.html --unicodes > glyphhanger_output
 > pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff
 
+# install py-zopfli (see below) to use --with-zopfli for additional woff byte savings (ignored for woff2)
+> pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff --with-zopfli
+
 # or output WOFF2 (see additional installation instructions below)
 > pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff2
+
+# for old Android compatibility, leave off `--flavor` to output a subset TTF 
+> glyphhanger ./test.html --unicodes > glyphhanger_output
+> pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output
 
 # Remove temporary file
 > rm glyphhanger_output
@@ -69,11 +76,18 @@ See [https://github.com/fonttools/fonttools](https://github.com/fonttools/fontto
 ```
 pip install fonttools
 
-# Additional information for --flavor=woff2
+# Additional installation for --flavor=woff2
 git clone https://github.com/google/brotli
 cd brotli
 python setup.py install
+
+# Additional installation for --flavor=woff --with-zopfli
+git clone https://github.com/anthrotype/py-zopfli
+cd py-zopfli
+git submodule update --init --recursive
+python setup.py install
 ```
+
 
 ## Testing
 
