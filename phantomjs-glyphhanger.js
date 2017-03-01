@@ -87,9 +87,7 @@ Rsvp.all( promises ).then( function( results ) {
 	}
 
 	if( isCodePoints ) {
-		console.log( combinedCharacterSet.toArray().map(function( code ) {
-				return 'U+' + code.toString(16);
-			}).join(',') );
+		console.log( combinedCharacterSet.toHexRangeString() );
 	} else {
 		console.log( combinedCharacterSet.toArray().map(function( code ) {
 				return String.fromCharCode( code );
