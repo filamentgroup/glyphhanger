@@ -31,8 +31,8 @@
     "rsvp": "^3.3.3"
   },
   "devDependencies": {
-    "jsdom": "^9.9.1",
-    "jsdom-global": "^2.1.1",
+    "jsdom": "^11.0.0",
+    "jsdom-global": "^3.0.2",
     "mocha": "^3.2.0"
   }
 }
