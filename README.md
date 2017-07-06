@@ -115,16 +115,4 @@ Or, alternatively:
 # Reduced the 166KB .ttf font file to an 8KB .woff webfont file.
 ``` 
 
-_(See [Issue #4](https://github.com/filamentgroup/glyphhanger/issues/4)  on why Unicode code points are better)_
-
-### Deprecated Example using String values
-
-```
-> glyphhanger https://www.zachleat.com/web/ --spider --spider-limit=5 > glyphhanger_zachleat_output
-
-> cat glyphhanger_zachleat_output
- !$&()+,-./0123456789:?@ABCDEFGHIJLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz»é–—’“”→★
-
-> pyftsubset sourcesanspro-regular.ttf --unicodes-file=glyphhanger_zachleat_output --flavor=woff
-# Reduced the 166KB .ttf font file to an 8KB .woff webfont file.
-``` 
+You can exclude `--unicodes` to use String values instead, but first _(read [Issue #4](https://github.com/filamentgroup/glyphhanger/issues/4)  on why Unicode code points are better)_
