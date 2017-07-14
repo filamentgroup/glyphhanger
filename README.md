@@ -46,8 +46,8 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB,
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 2.84 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 2.24 KB)
 
-# Specify the formats to create (Available: woff2,woff,woff-zopfli,ttf)
-> glyphhanger --whitelist=woff2,woff --subset=*.ttf
+# Specify the formats to create (Available: ttf,woff,woff-zopfli,woff2)
+> glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=*.ttf
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff (was 145.06 KB, now 2.88 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 2.24 KB)
