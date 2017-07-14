@@ -1,6 +1,6 @@
 # glyphhanger
 
-Generates a combined list of every glyph used on a list of sample urls. This information can then be used to subset web fonts appropriately.
+Utility to automatically subset fonts for serving on the web. Can generates a combined list of every glyph used on a list of sample files or urls.
 
 ## Installation
 
@@ -29,6 +29,8 @@ npm install -g glyphhanger
 ```
 
 ### Subset font files automatically
+
+Use `--subset=*.ttf` to select some font files for subsetting. Note that you can also [subset yourself manually with `pyftsubset`](docs/manual-subset.md), although I’m not sure why you would.
 
 ```
 > glyphhanger ./test.html --subset=*.ttf
@@ -85,28 +87,6 @@ Default `--spider-limit` is 10. Increasing this will increase the amount of time
 
 # version
 > glyphhanger --version
-```
-
-### Output to a file, use with `pyftsubset`
-
-Don’t use verbose mode here, we want to save the output to a file.
-
-```
-> glyphhanger ./test.html --unicodes > glyphhanger_output
-> pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff
-
-# install py-zopfli (see below) to use --with-zopfli for additional woff byte savings (ignored for woff2)
-> pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff --with-zopfli
-
-# or output WOFF2 (see additional installation instructions below)
-> pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff2
-
-# for old Android compatibility, leave off `--flavor` to output a subset TTF 
-> glyphhanger ./test.html --unicodes > glyphhanger_output
-> pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output
-
-# Remove temporary file
-> rm glyphhanger_output
 ```
 
 ### Installing `pyftsubset`
