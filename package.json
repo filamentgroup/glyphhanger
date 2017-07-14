@@ -1,6 +1,6 @@
 {
   "name": "glyphhanger",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A tool to ease webfont subsetting.",
   "main": "index.js",
   "scripts": {
