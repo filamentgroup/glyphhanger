@@ -26,9 +26,13 @@
   "dependencies": {
     "chalk": "^1.1.3",
     "characterset": "^1.2.0",
+    "filesize": "^3.5.10",
+    "glob": "^7.1.2",
     "minimist": "^1.2.0",
+    "parse-filepath": "^1.0.1",
     "phantomjs-prebuilt": "^2.1.14",
-    "rsvp": "^3.3.3"
+    "rsvp": "^3.3.3",
+    "shelljs": "^0.7.8"
   },
   "devDependencies": {
     "jsdom": "^11.0.0",

@@ -1,60 +1,66 @@
 #!/usr/bin/env node
 
+var fs = require( "fs" );
+var filesize = require( "filesize" );
 var path = require( "path" );
 var phantomjs = require( "phantomjs-prebuilt" );
 var childProcess = require( "child_process" );
 var chalk = require( "chalk" );
 var argv = require( "minimist" )( process.argv.slice(2) );
+var glob = require( "glob" );
+var shell = require( "shelljs" );
+var parsePath = require( "parse-filepath" );
+var CharacterSet = require( "characterset" );
 
-var pluginName = "glyphhanger";
+function GlyphHangerFormat( formats ) {
+	var lookup = {};
+	( formats || "ttf,woff2,woff-zopfli" ).split( "," ).forEach(function( format ) {
+		lookup[ format.trim().toLowerCase() ] = true;
+	})
+	this.formats = lookup;
+};
+GlyphHangerFormat.prototype.hasFormat = function( format ) {
+	return this.formats[ format ] === true;
+};
 
-if( !argv.version && ( !argv._ || !argv._.length ) ) {
-	var out = [];
-
-	out.push( chalk.red( "glyphhanger error: requires at least one URL argument." ) );
-	out.push( "" );
-	out.push( "usage: glyphhanger ./test.html" );
-	out.push( "       glyphhanger http://example.com" );
-	out.push( "       glyphhanger https://google.com https://www.filamentgroup.com" );
-	out.push( "" );
-	out.push( "arguments: " );
-	out.push( "  -w abcdef" );
-	out.push( "       A list of whitelist characters." );
-	out.push( "  --US_ASCII" );
-	out.push( "       Shortcut for whitelisting the printable US-ASCII characters" );
-	out.push( "  --unicodes" );
-	out.push( "       Output code points instead of string values (better compatibility)." );
-	out.push( "  --verbose" );
-	out.push( "  --spider" );
-	out.push( "       Gather urls from the main page and navigate those URLs." );
-	out.push( "  --spider-limit=10" );
-	out.push( "       Maximum number of URLs gathered from the spider (default: 10, use 0 to ignore)." );
-	out.push( "  --version" );
-	out.push( "       Outputs the glyphhanger version number." );
-
-	console.log( out.join( "\n" ) );
-	return;
+function GlyphHangerWhitelist( chars, useUsAscii ) {
+	var whitelist = "";
+	if( useUsAscii ) {
+		whitelist += " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+	}
+	if( chars ) {
+		whitelist += chars;
+	}
+	this.whitelist = whitelist;
 }
 
+GlyphHangerWhitelist.prototype.usingWhitelist = function() {
+	return !!this.whitelist;
+};
+GlyphHangerWhitelist.prototype.getWhitelist = function() {
+	return this.whitelist;
+};
+GlyphHangerWhitelist.prototype.getWhitelistAsUnicodes = function() {
+	var cs = new CharacterSet( this.whitelist );
+	return cs.toHexRangeString();
+};
 
 function PhantomGlyphHanger() {
 }
-
+PhantomGlyphHanger.prototype.setSubset = function( subset ) {
+	this.subset = !!subset;
+};
+PhantomGlyphHanger.prototype.setFetchUrlsCallback = function( callback ) {
+	this.fetchUrlsCallback = callback;
+};
 PhantomGlyphHanger.prototype.setVerbose = function( verbose ) {
 	this.verbose = !!verbose;
 };
 PhantomGlyphHanger.prototype.setUnicodesOutput = function( unicodes ) {
 	this.unicodes = !!unicodes;
 };
-PhantomGlyphHanger.prototype.setWhitelist = function( chars, useUsAscii ) {
-	var whitelist = "";
-	if( chars ) {
-		whitelist += chars;
-	}
-	if( useUsAscii ) {
-		whitelist += " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
-	}
-	this.whitelist = whitelist;
+PhantomGlyphHanger.prototype.setWhitelist = function( whitelistObj ) {
+	this.whitelist = whitelistObj;
 };
 
 PhantomGlyphHanger.prototype.getArguments = function() {
@@ -63,29 +69,67 @@ PhantomGlyphHanger.prototype.getArguments = function() {
 		path.join( __dirname, "phantomjs-glyphhanger.js" )
 	];
 
-	args.push( this.verbose );
-	args.push( this.unicodes );
-	args.push( this.whitelist );
+	args.push( !this.subset && this.verbose ); // can’t use subset and verbose together.
+	args.push( this.subset ? true : this.unicodes ); // when subsetting you have to use unicodes
+	args.push( this.whitelist.getWhitelist() );
 
 	return args;
 };
 
+PhantomGlyphHanger.prototype.output = function( chars ) {
+	if( chars ) {
+		console.log( chars );
+	} else {
+		console.log( this.unicodes ? this.whitelist.getWhitelistAsUnicodes() : this.whitelist.getWhitelist() );
+	}
+};
+
 PhantomGlyphHanger.prototype.fetchUrls = function( urls ) {
 	var args = this.getArguments();
-
-	if( this.verbose ) {
-		urls.forEach(function( url, index ) {
-			console.log( "glyphhanger-spider found (" + ( index + 1 ) + "): " + url );
-		});
-	}
 
 	childProcess.execFile( phantomjs.path, args.concat( urls ), function( error, stdout, stderr ) {
 		if( error ) {
 			throw error;
 		}
 
-		console.log( stdout );
-	});
+
+		if( this.fetchUrlsCallback ) {
+			this.fetchUrlsCallback( stdout.trim() );
+		} else {
+			this.output( stdout );
+		}
+	}.bind( this ));
+};
+
+PhantomGlyphHanger.prototype.outputHelp = function() {
+	// bad usage, output error and quit
+	var out = [];
+
+	out.push( chalk.red( "glyphhanger error: requires at least one URL or whitelist." ) );
+	out.push( "" );
+	out.push( "usage: glyphhanger ./test.html" );
+	out.push( "       glyphhanger http://example.com" );
+	out.push( "       glyphhanger https://google.com https://www.filamentgroup.com" );
+	out.push( "       glyphhanger http://example.com --subset=*.ttf" );
+	out.push( "       glyphhanger --whitelist=abcdef --subset=*.ttf" );
+	out.push( "" );
+	out.push( "arguments: " );
+	out.push( "  --verbose" );
+	out.push( "  --version" );
+	out.push( "  --whitelist=abcdef" );
+	out.push( "       A list of whitelist characters (optionally also --US_ASCII)." );
+	out.push( "  --unicodes" );
+	out.push( "       Output code points instead of string values (better compatibility)." );
+	out.push( "  --subset=*.ttf" );
+	out.push( "       Automatically subsets one or more font files using fonttools `pyftsubset`." );
+	out.push( "  --formats=ttf,woff,woff2,woff-zopfli" );
+	out.push( "       woff2 requires brotli and woff-zopfli requires zopfli, installation instructions: https://github.com/filamentgroup/glyphhanger#installing-pyftsubset" );
+	out.push( "" );
+	out.push( "  --spider" );
+	out.push( "       Gather urls from the main page and navigate those URLs." );
+	out.push( "  --spider-limit=10" );
+	out.push( "       Maximum number of URLs gathered from the spider (default: 10, use 0 to ignore)." );
+	console.log( out.join( "\n" ) );
 };
 
 function PhantomGlyphHangerSpider() {
@@ -119,22 +163,113 @@ PhantomGlyphHangerSpider.prototype.findUrls = function( url, callback ) {
 	}.bind( this ));
 };
 
+function GlyphHangerSubset() {}
+
+GlyphHangerSubset.prototype.setFontFiles = function( ttfFontFiles ) {
+	this.fontPaths = ttfFontFiles;
+};
+
+GlyphHangerSubset.prototype.setFormats = function( formatObj ) {
+	this.formats = formatObj;
+};
+
+GlyphHangerSubset.prototype.subsetAll = function( unicodes, formats ) {
+	this.fontPaths.forEach(function( fontPath ) {
+		if( this.formats.hasFormat( "ttf" ) ) {
+			this.subset( fontPath, unicodes );
+		}
+		if( this.formats.hasFormat( "woff" ) ) {
+			this.subset( fontPath, unicodes, "woff", false );
+		}
+		if( this.formats.hasFormat( "woff-zopfli" ) ) {
+			this.subset( fontPath, unicodes, "woff", true );
+		}
+		if( this.formats.hasFormat( "woff2" ) ) {
+			this.subset( fontPath, unicodes, "woff2" );
+		}
+	}.bind( this ));
+};
+
+GlyphHangerSubset.prototype.subset = function( inputFile, unicodes, format, useZopfli ) {
+	var fontPath = parsePath( inputFile );
+	var outputFilename = fontPath.name + "-subset" + ( useZopfli ? ".zopfli" : "" ) + ( format ? "." + format : fontPath.ext );
+	var outputFullPath = path.join( fontPath.dir, outputFilename );
+	var cmd = [ "pyftsubset" ];
+	cmd.push( inputFile );
+	cmd.push( "--output-file=" + outputFullPath );
+	cmd.push( "--unicodes=" + unicodes );
+	if( format ) {
+		format = format.toLowerCase();
+
+		cmd.push( "--flavor=" + format );
+
+		if( format === "woff" && useZopfli ) {
+			cmd.push( "--with-zopfli" );
+		}
+	}
+
+	if( !shell.which( "pyftsubset" ) ) {
+		console.log( "`pyftsubset` from fonttools is required for the --subset feature." );
+		shell.exit(1);
+	}
+
+	if( shell.exec( cmd.join( " " ) ).code !== 0 ) {
+		shell.echo( "Error: pyftsubset command failed (" + cmd.join( " " ) + ")." );
+		shell.exit(1);
+	}
+
+	var inputStat = fs.statSync( inputFile );
+	var outputStat = fs.statSync( outputFullPath );
+	console.log( "Subsetting", inputFile, "to", outputFilename, "(was " + chalk.red( filesize( inputStat.size ) ) + ", now " + chalk.green( filesize( outputStat.size ) ) + ")" );
+}
+
+
+var formats = new GlyphHangerFormat( argv.formats );
+var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, argv.US_ASCII );
 
 var pgh = new PhantomGlyphHanger();
 pgh.setVerbose( argv.verbose );
 pgh.setUnicodesOutput( argv.unicodes );
-pgh.setWhitelist( argv.w );
+pgh.setWhitelist( whitelist );
+pgh.setSubset( argv.subset );
+
+var subset = new GlyphHangerSubset();
+subset.setFormats( formats );
+
+if( argv.subset ) {
+	var fontFiles = glob.sync( argv.subset );
+
+	subset.setFontFiles( fontFiles );
+
+	pgh.setFetchUrlsCallback(function( unicodes ) {
+		subset.subsetAll( unicodes );
+	});
+}
 
 if( argv.version ) {
 	var pkg = require( "./package.json" );
 	console.log( pkg.version );
-} else if( !argv.spider && !argv[ 'spider-limit' ] ) {
-	pgh.fetchUrls( argv._ );
-} else {
+} else if( ( !argv._ || !argv._.length ) && whitelist.usingWhitelist() ) {
+	if( argv.subset ) {
+		subset.subsetAll( whitelist.getWhitelistAsUnicodes() );
+	} else {
+		pgh.output();
+	}
+} else if( !argv._ || !argv._.length ) {
+	pgh.outputHelp();
+} else if( argv.spider || argv[ 'spider-limit' ] ) {
 	var spider = new PhantomGlyphHangerSpider();
 	spider.setLimit( argv[ 'spider-limit' ] );
 
 	spider.findUrls( argv._, function( urls ) {
+		if( argv.verbose ) {
+			urls.forEach(function( url, index ) {
+				console.log( "glyphhanger-spider found (" + ( index + 1 ) + "): " + url );
+			});
+		}
+
 		pgh.fetchUrls( urls );
 	});
+} else {
+	pgh.fetchUrls( argv._ );
 }
