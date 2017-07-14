@@ -71,13 +71,17 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 ### Use the spider to gather URLs from links
 
-Finds all the `<a href>` elements on the page with *local* (not external) links and adds those to the glyphhanger URLs.
+Finds all the `<a href>` elements on the page with *local* (not external) links and adds those to the glyphhanger URLs. If you specify `--spider-limit`, `--spider` is assumed.
 
 ```
-> glyphhanger ./test.html --spider --spider-limit=10
+> glyphhanger ./test.html --spider
+> glyphhanger ./test.html --spider-limit=10
+
+# No limit
+> glyphhanger ./test.html --spider-limit=0
 ```
 
-Default `--spider-limit` is 10. Increasing this will increase the amount of time the task takes.
+Default `--spider-limit` is 10. Set to `0` for no limit. This will greatly affect how long the task takes.
 
 ### Additional options
 
