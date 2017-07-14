@@ -16,7 +16,7 @@ var childArgs = [
 	path.join( __dirname, "phantomjs-glyphhanger.js" )
 ];
 
-if( !argv._ || !argv._.length ) {
+if( !argv.version && ( !argv._ || !argv._.length ) ) {
 	var out = [];
 
 	out.push( chalk.red( "glyphhanger error: requires at least one URL argument." ) );
@@ -37,6 +37,8 @@ if( !argv._ || !argv._.length ) {
 	out.push( "       Gather urls from the main page and navigate those URLs." );
 	out.push( "  --spider-limit=10" );
 	out.push( "       Maximum number of URLs gathered from the spider." );
+	out.push( "  --version" );
+	out.push( "       Outputs the glyphhanger version number." );
 
 	console.log( out.join( "\n" ) );
 	return;
@@ -78,7 +80,10 @@ function phantomGlyphhanger( urls ) {
 	});
 }
 
-if( !argv.spider ) {
+if( argv.version ) {
+	var pkg = require( "./package.json" );
+	console.log( pkg.version );
+} else if( !argv.spider ) {
 	phantomGlyphhanger( argv._ );
 } else {
 	childProcess.execFile( phantomjs.path, urlsChildArgs, function( error, stdout, stderr ) {
