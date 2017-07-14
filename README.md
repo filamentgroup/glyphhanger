@@ -25,6 +25,9 @@ npm install -g glyphhanger
 
 # verbose mode
 > glyphhanger https://google.com --verbose
+
+# version
+> glyphhanger --version
 ```
 
 ### Whitelist Characters
