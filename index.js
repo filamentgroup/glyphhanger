@@ -8,14 +8,6 @@ var argv = require( "minimist" )( process.argv.slice(2) );
 
 var pluginName = "glyphhanger";
 
-var urlsChildArgs = [
-	path.join( __dirname, "phantomjs-urls.js" )
-];
-
-var childArgs = [
-	path.join( __dirname, "phantomjs-glyphhanger.js" )
-];
-
 if( !argv.version && ( !argv._ || !argv._.length ) ) {
 	var out = [];
 
@@ -36,7 +28,7 @@ if( !argv.version && ( !argv._ || !argv._.length ) ) {
 	out.push( "  --spider" );
 	out.push( "       Gather urls from the main page and navigate those URLs." );
 	out.push( "  --spider-limit=10" );
-	out.push( "       Maximum number of URLs gathered from the spider." );
+	out.push( "       Maximum number of URLs gathered from the spider (default: 10, use 0 to ignore)." );
 	out.push( "  --version" );
 	out.push( "       Outputs the glyphhanger version number." );
 
@@ -44,54 +36,105 @@ if( !argv.version && ( !argv._ || !argv._.length ) ) {
 	return;
 }
 
-// Verbose mode
-childArgs.push( argv.verbose ? true : false );
 
-// Output code points
-childArgs.push( argv.unicodes ? true : false );
-
-// Whitelisted characters
-var whitelist = "";
-if( argv.w ) {
-	whitelist += argv.w;
+function PhantomGlyphHanger() {
 }
-if( argv.US_ASCII ) {
-	whitelist += " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
-}
-childArgs.push( whitelist );
 
-// Spider for URLs
-urlsChildArgs = urlsChildArgs.concat( argv._ );
+PhantomGlyphHanger.prototype.setVerbose = function( verbose ) {
+	this.verbose = !!verbose;
+};
+PhantomGlyphHanger.prototype.setUnicodesOutput = function( unicodes ) {
+	this.unicodes = !!unicodes;
+};
+PhantomGlyphHanger.prototype.setWhitelist = function( chars, useUsAscii ) {
+	var whitelist = "";
+	if( chars ) {
+		whitelist += chars;
+	}
+	if( useUsAscii ) {
+		whitelist += " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+	}
+	this.whitelist = whitelist;
+};
 
-function phantomGlyphhanger( urls ) {
-	var prefix = pluginName + "-spider found";
-	if( argv.verbose ) {
+PhantomGlyphHanger.prototype.getArguments = function() {
+	// order is important here
+	var args = [
+		path.join( __dirname, "phantomjs-glyphhanger.js" )
+	];
+
+	args.push( this.verbose );
+	args.push( this.unicodes );
+	args.push( this.whitelist );
+
+	return args;
+};
+
+PhantomGlyphHanger.prototype.fetchUrls = function( urls ) {
+	var args = this.getArguments();
+
+	if( this.verbose ) {
 		urls.forEach(function( url, index ) {
-			console.log( prefix + " (" + ( index + 1 ) + "): " + url );
+			console.log( "glyphhanger-spider found (" + ( index + 1 ) + "): " + url );
 		});
 	}
 
-	childProcess.execFile( phantomjs.path, childArgs.concat( urls ), function( error, stdout, stderr ) {
+	childProcess.execFile( phantomjs.path, args.concat( urls ), function( error, stdout, stderr ) {
 		if( error ) {
 			throw error;
 		}
 
 		console.log( stdout );
 	});
+};
+
+function PhantomGlyphHangerSpider() {
+	this.limit = 10;
 }
 
-if( argv.version ) {
-	var pkg = require( "./package.json" );
-	console.log( pkg.version );
-} else if( !argv.spider ) {
-	phantomGlyphhanger( argv._ );
-} else {
-	childProcess.execFile( phantomjs.path, urlsChildArgs, function( error, stdout, stderr ) {
+PhantomGlyphHangerSpider.prototype.setLimit = function( limit ) {
+	if( limit !== undefined ) {
+		this.limit = limit;
+	}
+};
+
+PhantomGlyphHangerSpider.prototype.getArguments = function() {
+	// order is important here
+	var args = [
+		path.join( __dirname, "phantomjs-urls.js" )
+	];
+	return args;
+};
+
+PhantomGlyphHangerSpider.prototype.findUrls = function( url, callback ) {
+	var args = this.getArguments();
+
+	childProcess.execFile( phantomjs.path, args.concat( url ), function( error, stdout, stderr ) {
 		if( error ) {
 			throw error;
 		}
 
 		var urls = stdout.trim().split( "\n" );
-		phantomGlyphhanger( urls.slice( 0, argv[ 'spider-limit' ]  || 10 ) );
+		callback( this.limit ? urls.slice( 0, this.limit ) : urls );
+	}.bind( this ));
+};
+
+
+var pgh = new PhantomGlyphHanger();
+pgh.setVerbose( argv.verbose );
+pgh.setUnicodesOutput( argv.unicodes );
+pgh.setWhitelist( argv.w );
+
+if( argv.version ) {
+	var pkg = require( "./package.json" );
+	console.log( pkg.version );
+} else if( !argv.spider && !argv[ 'spider-limit' ] ) {
+	pgh.fetchUrls( argv._ );
+} else {
+	var spider = new PhantomGlyphHangerSpider();
+	spider.setLimit( argv[ 'spider-limit' ] );
+
+	spider.findUrls( argv._, function( urls ) {
+		pgh.fetchUrls( urls );
 	});
 }
