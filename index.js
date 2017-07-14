@@ -257,7 +257,7 @@ if( argv.version ) {
 	}
 } else if( !argv._ || !argv._.length ) {
 	pgh.outputHelp();
-} else if( argv.spider || argv[ 'spider-limit' ] ) {
+} else if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
 	var spider = new PhantomGlyphHangerSpider();
 	spider.setLimit( argv[ 'spider-limit' ] );
 
