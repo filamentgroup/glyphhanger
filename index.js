@@ -92,7 +92,6 @@ PhantomGlyphHanger.prototype.fetchUrls = function( urls ) {
 			throw error;
 		}
 
-
 		if( this.fetchUrlsCallback ) {
 			this.fetchUrlsCallback( stdout.trim() );
 		} else {
@@ -123,7 +122,7 @@ PhantomGlyphHanger.prototype.outputHelp = function() {
 	out.push( "  --subset=*.ttf" );
 	out.push( "       Automatically subsets one or more font files using fonttools `pyftsubset`." );
 	out.push( "  --formats=ttf,woff,woff2,woff-zopfli" );
-	out.push( "       woff2 requires brotli and woff-zopfli requires zopfli, installation instructions: https://github.com/filamentgroup/glyphhanger#installing-pyftsubset" );
+	out.push( "       woff2 requires brotli, woff-zopfli requires zopfli, installation instructions: https://github.com/filamentgroup/glyphhanger#installing-pyftsubset" );
 	out.push( "" );
 	out.push( "  --spider" );
 	out.push( "       Gather urls from the main page and navigate those URLs." );

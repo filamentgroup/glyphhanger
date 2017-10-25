@@ -125,7 +125,7 @@ Or, alternatively:
 
 ## Limitations
 
-* Pseudo-element CSS `content` is not parsed.
+* [Pseudo-element CSS `content` is not parsed.](https://github.com/filamentgroup/glyphhanger/issues/10)
 
 ## Example using Unicode code points
 
@@ -133,10 +133,10 @@ Or, alternatively:
 > glyphhanger https://www.zachleat.com/web/ --unicodes --spider --spider-limit=5 > glyphhanger_zachleat_output
 
 > cat glyphhanger_zachleat_output
- !$&()+,-./0123456789:?@ABCDEFGHIJLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz»é–—’“”→★
+ U+20,U+21,U+23,U+24,U+26,U+28,U+29,U+2B-3A,U+3F-5B,U+5D,U+61-7A,U+BB,U+2013,U+2014,U+2019,U+201C,U+201D,U+2192,U+2600,U+2605,U+27A1,U+FE0F,U+1F525
 
 > pyftsubset sourcesanspro-regular.ttf --unicodes-file=glyphhanger_zachleat_output --flavor=woff
-# Reduced the 166KB .ttf font file to an 8KB .woff webfont file.
+# Reduces the 166KB .ttf font file to an 8KB .woff web font file.
 ``` 
 
 You can exclude `--unicodes` to use String values instead, but first _(read [Issue #4](https://github.com/filamentgroup/glyphhanger/issues/4)  on why Unicode code points are better)_
