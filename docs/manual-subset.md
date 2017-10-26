@@ -3,7 +3,7 @@
 As of GlyphHanger 1.0.5, this can be done automatically with the `--subset` option. For posterity, this method will still work. Don’t use verbose mode, we want to save the output to a file.
 
 ```
-> glyphhanger ./test.html --unicodes > glyphhanger_output
+> glyphhanger ./test.html > glyphhanger_output
 > pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff
 
 # install py-zopfli (see below) to use --with-zopfli for additional woff byte savings (ignored for woff2)
@@ -13,7 +13,7 @@ As of GlyphHanger 1.0.5, this can be done automatically with the `--subset` opti
 > pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output --flavor=woff2
 
 # for old Android compatibility, leave off `--flavor` to output a subset TTF 
-> glyphhanger ./test.html --unicodes > glyphhanger_output
+> glyphhanger ./test.html > glyphhanger_output
 > pyftsubset FONTFILENAME.ttf --unicodes-file=glyphhanger_output
 
 # Remove temporary file

@@ -60,8 +60,8 @@ PhantomGlyphHanger.prototype.setFetchUrlsCallback = function( callback ) {
 PhantomGlyphHanger.prototype.setVerbose = function( verbose ) {
 	this.verbose = !!verbose;
 };
-PhantomGlyphHanger.prototype.setUnicodesOutput = function( unicodes ) {
-	this.unicodes = !!unicodes;
+PhantomGlyphHanger.prototype.setUnicodesOutput = function( showString ) {
+	this.unicodes = !showString;
 };
 PhantomGlyphHanger.prototype.setWhitelist = function( whitelistObj ) {
 	this.whitelist = whitelistObj;
@@ -121,8 +121,8 @@ PhantomGlyphHanger.prototype.outputHelp = function() {
 	out.push( "  --version" );
 	out.push( "  --whitelist=abcdef" );
 	out.push( "       A list of whitelist characters (optionally also --US_ASCII)." );
-	out.push( "  --unicodes" );
-	out.push( "       Output code points instead of string values (better compatibility)." );
+	out.push( "  --string" );
+	out.push( "       Output the actual characters instead of Unicode code point values." );
 	out.push( "  --subset=*.ttf" );
 	out.push( "       Automatically subsets one or more font files using fonttools `pyftsubset`." );
 	out.push( "  --formats=ttf,woff,woff2,woff-zopfli" );
@@ -232,7 +232,11 @@ var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, argv.US_ASCI
 
 var pgh = new PhantomGlyphHanger();
 pgh.setVerbose( argv.verbose );
-pgh.setUnicodesOutput( argv.unicodes );
+if( argv.unicodes ) {
+	console.log( '--unicodes was made default in v2.0. To output characters instead of code points, use --string' );
+	shell.exit(1);
+}
+pgh.setUnicodesOutput( argv.string );
 pgh.setWhitelist( whitelist );
 pgh.setSubset( argv.subset );
 
