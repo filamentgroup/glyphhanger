@@ -24,25 +24,29 @@ GlyphHangerFormat.prototype.hasFormat = function( format ) {
 };
 
 function GlyphHangerWhitelist( chars, useUsAscii ) {
-	var whitelist = "";
+	var cs = new CharacterSet();
 	if( useUsAscii ) {
-		whitelist += " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+		cs = cs.union( new CharacterSet(" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~") );
 	}
-	if( chars ) {
-		whitelist += chars;
+	if( chars && chars.match( GlyphHangerWhitelist.unicodeCodePointsRegex ) ) {
+		cs = cs.union( CharacterSet.parseUnicodeRange( chars ) );
+	} else if( chars ) {
+		cs = cs.union( new CharacterSet( chars ) );
 	}
-	this.whitelist = whitelist;
+
+	this.whitelist = cs;
 }
 
+GlyphHangerWhitelist.unicodeCodePointsRegex = /(U\+[\dABCDEF]+\-?[\dABCDEF]*),?/g;
+
 GlyphHangerWhitelist.prototype.usingWhitelist = function() {
-	return !!this.whitelist;
+	return !this.whitelist.isEmpty();
 };
 GlyphHangerWhitelist.prototype.getWhitelist = function() {
-	return this.whitelist;
+	return this.whitelist.toString();
 };
 GlyphHangerWhitelist.prototype.getWhitelistAsUnicodes = function() {
-	var cs = new CharacterSet( this.whitelist );
-	return cs.toHexRangeString();
+	return this.whitelist.toHexRangeString();
 };
 
 function PhantomGlyphHanger() {
@@ -71,7 +75,7 @@ PhantomGlyphHanger.prototype.getArguments = function() {
 
 	args.push( !this.subset && this.verbose ); // can’t use subset and verbose together.
 	args.push( this.subset ? true : this.unicodes ); // when subsetting you have to use unicodes
-	args.push( this.whitelist.getWhitelist() );
+	args.push( this.whitelist.getWhitelistAsUnicodes() );
 
 	return args;
 };

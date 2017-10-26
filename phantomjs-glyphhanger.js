@@ -66,7 +66,7 @@ var isCodePoints = args.shift() === "true";
 // Whitelist
 var whitelist = args.shift();
 if( whitelist.length ) {
-	combinedCharacterSet = combinedCharacterSet.union( new CharacterSet( whitelist ) );
+	combinedCharacterSet = combinedCharacterSet.union( CharacterSet.parseUnicodeRange( whitelist ) );
 }
 
 // Add URLS
