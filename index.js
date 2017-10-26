@@ -129,7 +129,7 @@ PhantomGlyphHanger.prototype.outputHelp = function() {
 	out.push( "       woff2 requires brotli, woff-zopfli requires zopfli, installation instructions: https://github.com/filamentgroup/glyphhanger#installing-pyftsubset" );
 	out.push( "" );
 	out.push( "  --spider" );
-	out.push( "       Gather urls from the main page and navigate those URLs." );
+	out.push( "       Gather local URLs from the main page and navigate those URLs." );
 	out.push( "  --spider-limit=10" );
 	out.push( "       Maximum number of URLs gathered from the spider (default: 10, use 0 to ignore)." );
 	console.log( out.join( "\n" ) );
