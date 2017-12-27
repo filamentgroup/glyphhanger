@@ -14,7 +14,7 @@ function GlyphHangerWhitelist( chars, useUsAscii ) {
 	this.whitelist = cs;
 }
 
-GlyphHangerWhitelist.unicodeCodePointsRegex = /(U\+[\dABCDEF]+\-?[\dABCDEF]*),?/g;
+GlyphHangerWhitelist.unicodeCodePointsRegex = /(U\+[\dABCDEF]+\-?[\dABCDEF]*),?/gi;
 
 GlyphHangerWhitelist.prototype.usingWhitelist = function() {
 	return !this.whitelist.isEmpty();

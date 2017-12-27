@@ -1,13 +1,15 @@
+const assert = require( "assert" );
+const path = require( "path" );
+const phantomjs = require( "phantomjs-prebuilt" );
+const childProcess = require( "child_process" );
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const window = (new JSDOM(`<!doctype html><html><body></body></html>`)).window;
 const document = window.document;
-const assert = require( "assert" );
+
 const GlyphHanger = require( "../glyphhanger.js" );
 const GlyphHangerSpider = require( "../glyphhanger-spider.js" );
-const path = require( "path" );
-const phantomjs = require( "phantomjs-prebuilt" );
-const childProcess = require( "child_process" );
+const GlyphHangerWhitelist = require( "../src/GlyphHangerWhitelist" );
 
 describe( "glyphhanger", function() {
 	describe( "Simple node", function() {
@@ -158,5 +160,29 @@ describe( "glyphhanger-spider", function() {
 				done();
 			});
 		})
+	});
+});
+
+describe( "GlyphHangerWhitelist", function() {
+	describe( "unicodeCodePointsRegex", function() {
+		it( "Matched a single code point", function() {
+			assert.ok( "U+20".match( GlyphHangerWhitelist.unicodeCodePointsRegex ) );
+		});
+
+		it( "Matched a range", function() {
+			assert.ok( "U+20-32".match( GlyphHangerWhitelist.unicodeCodePointsRegex ) );
+		});
+
+		it( "Mixed range", function() {
+			assert.ok( "U+20-7E,U+A0-FF,U+131".match( GlyphHangerWhitelist.unicodeCodePointsRegex ) );
+		});
+
+		it( "Mixed range with spaces", function() {
+			assert.ok( "U+20-7E, U+A0-FF, U+131".match( GlyphHangerWhitelist.unicodeCodePointsRegex ) );
+		});
+
+		it( "Lower case mixed range with spaces", function() {
+			assert.ok( "u+20-7e, u+a0-ff, u+131".match( GlyphHangerWhitelist.unicodeCodePointsRegex ) );
+		});
 	});
 });
