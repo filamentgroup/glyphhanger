@@ -11,13 +11,22 @@
 	var GHS = function() {
 		this.urls = [];
 		this.duplicates = {};
+
+		if( typeof window !== "undefined" ) {
+			this.setEnv( window );
+		}
+	};
+
+	GHS.prototype.setEnv = function( win ) {
+		this.window = win;
+		this.document = win.document;
 	};
 
 	GHS.prototype.add = function( url ) {
 		if( !url ||
 			this.duplicates[ url ] ||
 			url.indexOf( "mailto:" ) === 0 || // is email link
-			url.indexOf( location.host ) === -1 ) { // is not a local link
+			url.indexOf( this.document.location.host ) === -1 ) { // is not a local link
 			return;
 		}
 
@@ -26,7 +35,7 @@
 	};
 
 	GHS.prototype.normalizeURL = function( url ) {
-		var a = document.createElement( "a" );
+		var a = this.document.createElement( "a" );
 		a.href = url;
 		return a.href;
 	};

@@ -1,11 +1,13 @@
-require( "jsdom-global" )();
-
-var assert = require( "assert" );
-var GlyphHanger = require( "../glyphhanger.js" );
-var GlyphHangerSpider = require( "../glyphhanger-spider.js" );
-var path = require( "path" );
-var phantomjs = require( "phantomjs-prebuilt" );
-var childProcess = require( "child_process" );
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const window = (new JSDOM(`<!doctype html><html><body></body></html>`)).window;
+const document = window.document;
+const assert = require( "assert" );
+const GlyphHanger = require( "../glyphhanger.js" );
+const GlyphHangerSpider = require( "../glyphhanger-spider.js" );
+const path = require( "path" );
+const phantomjs = require( "phantomjs-prebuilt" );
+const childProcess = require( "child_process" );
 
 describe( "glyphhanger", function() {
 	describe( "Simple node", function() {
@@ -102,6 +104,7 @@ describe( "glyphhanger-spider", function() {
 
 		it( "found one link", function() {
 			var gh = new GlyphHangerSpider();
+			gh.setEnv( window );
 			gh.parse( div );
 			var urls = gh.getUrls();
 
@@ -115,6 +118,7 @@ describe( "glyphhanger-spider", function() {
 
 		it( "found two links", function() {
 			var gh = new GlyphHangerSpider();
+			gh.setEnv( window );
 			gh.parse( div );
 			var urls = gh.getUrls();
 
@@ -128,6 +132,7 @@ describe( "glyphhanger-spider", function() {
 
 		it( "did not find the email link", function() {
 			var gh = new GlyphHangerSpider();
+			gh.setEnv( window );
 			gh.parse( div );
 			var urls = gh.getUrls();
 
