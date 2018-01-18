@@ -28,35 +28,58 @@ if( argv.subset ) {
 
 	subset.setFontFiles( fontFiles );
 
+	// using URLs
 	pgh.setFetchUrlsCallback(function( unicodes ) {
 		subset.subsetAll( unicodes );
 	});
 }
 
+// glyphhanger --version
+// glyphhanger --help
+// glyphhanger
+// glyphhanger http://localhost/
+// glyphhanger http://localhost/ --spider 									(limit default 10)
+// glyphhanger http://localhost/ --spider-limit							(limit default 10)
+// glyphhanger http://localhost/ --spider-limit=0 					(no limit)
+// glyphhanger http://localhost/ --spider-limit=1						(limit 1)
+// glyphhanger --whitelist=ABCD															(convert characters to unicode range)
+// glyphhanger --US_ASCII																		(convert characters to unicode range)
+// glyphhanger --US_ASCII --whitelist=ABCD									(convert characters to unicode range)
+// glyphhanger --subset=*.ttf																(file format conversion)
+// glyphhanger --subset=*.ttf --whitelist=ABCD							(reduce to whitelist characters)
+// glyphhanger --subset=*.ttf --US_ASCII										(reduce to US_ASCII characters)
+// glyphhanger --subset=*.ttf --US_ASCII --whitelist=ABCD		(reduce to US_ASCII union with whitelist)
+
 if( argv.version ) {
 	var pkg = require( "./package.json" );
 	console.log( pkg.version );
-} else if( ( !argv._ || !argv._.length ) && whitelist.usingWhitelist() ) {
-	if( argv.subset ) {
-		subset.subsetAll( whitelist.getWhitelistAsUnicodes() );
-	} else {
-		pgh.output();
-	}
-} else if( !argv._ || !argv._.length ) {
+} else if( argv.help ) {
 	pgh.outputHelp();
-} else if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
-	var spider = new PhantomGlyphHangerSpider();
-	spider.setLimit( argv[ 'spider-limit' ] );
+} else if( argv._ && argv._.length ) {
+	if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
+		var spider = new PhantomGlyphHangerSpider();
+		spider.setLimit( argv[ 'spider-limit' ] );
 
-	spider.findUrls( argv._, function( urls ) {
-		if( argv.verbose ) {
-			urls.forEach(function( url, index ) {
-				console.log( "glyphhanger-spider found (" + ( index + 1 ) + "): " + url );
-			});
-		}
+		spider.findUrls( argv._, function( urls ) {
+			if( argv.verbose ) {
+				urls.forEach(function( url, index ) {
+					console.log( "glyphhanger-spider found (" + ( index + 1 ) + "): " + url );
+				});
+			}
 
-		pgh.fetchUrls( urls );
-	});
-} else {
-	pgh.fetchUrls( argv._ );
+			pgh.fetchUrls( urls );
+		});
+	} else {
+		pgh.fetchUrls( argv._ );
+	}
+} else { // not using URLs
+	if( argv.subset ) {
+		// --subset with or without --whitelist
+		subset.subsetAll( !whitelist.isEmpty() ? whitelist.getWhitelistAsUnicodes() : whitelist.getUniversalRangeAsUnicodes() );
+	} else if( !whitelist.isEmpty() ) {
+		// not subsetting, just output the code points (can convert whitelist string to code points)
+		pgh.output();
+	} else {
+		pgh.outputHelp();
+	}
 }

@@ -27,8 +27,8 @@ PhantomGlyphHanger.prototype.getArguments = function() {
 		path.join( __dirname, "../phantomjs-glyphhanger.js" )
 	];
 
-	args.push( !this.subset && this.verbose ); // can’t use subset and verbose together.
-	args.push( this.subset ? true : this.unicodes ); // when subsetting you have to use unicodes
+	args.push( !this.subset && this.verbose ); // verbose mode: forced off when subsetting
+	args.push( this.subset ? true : this.unicodes ); // unicodes mode: forced on when subsetting
 	args.push( this.whitelist.getWhitelistAsUnicodes() );
 
 	return args;
