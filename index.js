@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 var argv = require( "minimist" )( process.argv.slice(2) );
 var glob = require( "glob" );
-var shell = require( "shelljs" );
-
 var GlyphHangerFormat = require( "./src/GlyphHangerFormat" );
 var GlyphHangerWhitelist = require( "./src/GlyphHangerWhitelist" );
 var PhantomGlyphHanger = require( "./src/PhantomGlyphHanger" );
@@ -16,7 +14,7 @@ var pgh = new PhantomGlyphHanger();
 pgh.setVerbose( argv.verbose );
 if( argv.unicodes ) {
 	console.log( '--unicodes was made default in v2.0. To output characters instead of code points, use --string' );
-	shell.exit(1);
+	require( "shelljs" ).exit(1);
 }
 pgh.setUnicodesOutput( argv.string );
 pgh.setWhitelist( whitelist );
