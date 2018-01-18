@@ -4,6 +4,8 @@ Utility to automatically subset fonts for serving on the web. Can generates a co
 
 ## Installation
 
+Available on [npm](https://www.npmjs.com/package/glyphhanger).
+
 ```
 npm install -g glyphhanger
 ```
