@@ -89,7 +89,7 @@ describe( "glyphhanger", function() {
 		var args = [ path.join( __dirname, "..", "phantomjs-glyphhanger.js" ), false, false, "", path.join( __dirname, "test.html" ) ];
 
 		it( "should have 9 distinct glyphs", function( done ) {
-			this.timeout( 6000 );
+			this.timeout( 30000 );
 			childProcess.execFile( phantomjs.path, args, function( error, stdout, stderr ) {
 
 				assert.equal( "abcdefghi", stdout.trim() );
@@ -146,7 +146,7 @@ describe( "glyphhanger-spider", function() {
 		var args = [ path.join( __dirname, "..", "phantomjs-urls.js" ), path.join( __dirname, "urls.html" ) ];
 
 		it( "should have four links", function( done ) {
-			this.timeout( 6000 );
+			this.timeout( 30000 );
 			childProcess.execFile( phantomjs.path, args, function( error, stdout, stderr ) {
 
 				var expecting = [
