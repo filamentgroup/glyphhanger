@@ -37,6 +37,7 @@
 		if( node.nodeType !== 3 ) {
 			return "";
 		}
+
 		if( node.parentNode ) {
 			var textTransform = this.win.getComputedStyle( node.parentNode ).getPropertyValue( "text-transform" );
 			switch (textTransform) {
@@ -55,7 +56,7 @@
 	};
 
 	GH.prototype.getNodeValue = function( node ) {
-		return node.innerText || this.fakeInnerText( node );
+		return node.innerText || this.fakeInnerText( node ) || "";
 	};
 
 	GH.prototype.hasValue = function( node ) {
