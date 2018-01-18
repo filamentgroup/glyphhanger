@@ -2,6 +2,7 @@ var shell = require( "shelljs" );
 var parsePath = require( "parse-filepath" );
 var fs = require( "fs" );
 var filesize = require( "filesize" );
+var path = require("path");
 
 function GlyphHangerSubset() {}
 
