@@ -3,11 +3,14 @@ var phantomjs = require( "phantomjs-prebuilt" );
 var path = require( "path" );
 
 function PhantomGlyphHangerSpider() {
-	this.limit = 10;
+	this.defaultLimit = 10;
+	this.limit = this.defaultLimit;
 }
 
 PhantomGlyphHangerSpider.prototype.setLimit = function( limit ) {
-	if( limit !== undefined ) {
+	if( limit === true ) {
+		this.limit = this.defaultLimit;
+	} else if( limit !== undefined ) {
 		this.limit = limit;
 	}
 };
@@ -27,7 +30,6 @@ PhantomGlyphHangerSpider.prototype.findUrls = function( url, callback ) {
 		if( error ) {
 			throw error;
 		}
-
 		var urls = stdout.trim().split( "\n" );
 		callback( this.limit ? urls.slice( 0, this.limit ) : urls );
 	}.bind( this ));
