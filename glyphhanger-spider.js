@@ -37,7 +37,14 @@
 	GHS.prototype.normalizeURL = function( url ) {
 		var a = this.document.createElement( "a" );
 		a.href = url;
-		return a.href;
+		var href = a.href;
+
+		var foundPound = href.lastIndexOf("#");
+		if( foundPound > -1 ) {
+			return href.substr(0, foundPound );
+		}
+
+		return href;
 	};
 
 	GHS.prototype.parse = function( parentNode ) {
