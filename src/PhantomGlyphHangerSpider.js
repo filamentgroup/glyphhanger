@@ -15,7 +15,7 @@ PhantomGlyphHangerSpider.prototype.setLimit = function( limit ) {
 PhantomGlyphHangerSpider.prototype.getArguments = function() {
 	// order is important here
 	var args = [
-		path.join( __dirname, "phantomjs-urls.js" )
+		path.join( __dirname, "..", "phantomjs-urls.js" )
 	];
 	return args;
 };
