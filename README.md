@@ -32,7 +32,29 @@ npm install -g glyphhanger
 
 ### Subset font files automatically
 
-Use `--subset=*.ttf` to select some font files for subsetting. Note that you can also [subset yourself manually with `pyftsubset`](docs/manual-subset.md), although I’m not sure why you would.
+Use `--subset=*.ttf` to select some font files for subsetting. Note that you can also [subset yourself manually with `pyftsubset`](docs/manual-subset.md) (but glyphhanger is easier).
+
+#### Just make optimized TTF/WOFF/WOFF2 files
+
+```
+> glyphhanger --subset=*.ttf
+
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 70.25 KB)
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 36.51 KB)
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 28.73 KB)
+```
+
+#### Subset to specific characters only (no URLs)
+
+```
+> glyphhanger --whitelist=ABCD --subset=*.ttf
+
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 4.42 KB)
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 2.84 KB)
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 2.24 KB)
+```
+
+#### Subset to the glyphs at a URL
 
 ```
 > glyphhanger ./test.html --subset=*.ttf
@@ -40,15 +62,13 @@ Use `--subset=*.ttf` to select some font files for subsetting. Note that you can
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 24 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 14.34 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 11.37 KB)
+```
 
-# Subset to specific characters only (no URLs)
-> glyphhanger --whitelist=ABCD --subset=*.ttf
+#### Specify the formats to output
 
-Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 4.42 KB)
-Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 2.84 KB)
-Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 2.24 KB)
+Available formats: `ttf,woff,woff-zopfli,woff2`.
 
-# Specify the formats to create (Available: ttf,woff,woff-zopfli,woff2)
+```
 > glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=*.ttf
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff (was 145.06 KB, now 2.88 KB)
@@ -69,6 +89,11 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 # use without a URL (useful for manual subsetting)
 > glyphhanger --whitelist=ABCD --subset=*.ttf
+
+# Use without a URL to output a unicode-range
+> glyphhanger --whitelist=ABCD
+> glyphhanger --US_ASCII
+> glyphhanger --US_ASCII --whitelist=ABCD
 ```
 
 ### Use the spider to gather URLs from links
