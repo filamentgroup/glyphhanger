@@ -77,6 +77,7 @@ Finds all the `<a href>` elements on the page with *local* (not external) links 
 
 ```
 > glyphhanger ./test.html --spider
+> glyphhanger ./test.html --spider-limit
 > glyphhanger ./test.html --spider-limit=10
 
 # No limit
