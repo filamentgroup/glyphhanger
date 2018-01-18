@@ -78,22 +78,31 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 ### Whitelist Characters
 
 ```
-# whitelist specific characters
+# Add in a whitelist of specific characters
 > glyphhanger https://google.com --whitelist=abcdefgh
 
-# shortcut to whitelist all of US-ASCII
-> glyphhanger https://google.com --US_ASCII
+# Add in a whitelist as a unicode range
+> glyphhanger https://google.com --whitelist=U+26
 
-# use both together
-> glyphhanger https://google.com --whitelist=™ --US_ASCII
+# shortcut to add in a whitelist of all of US-ASCII (with an optional whitelist)
+> glyphhanger https://google.com --US_ASCII --whitelist=™
+```
 
-# use without a URL (useful for manual subsetting)
+#### Manual subsetting
+```
 > glyphhanger --whitelist=ABCD --subset=*.ttf
+```
 
-# Use without a URL to output a unicode-range
+#### Converting unicode ranges and back again
+
+```
+# Convert a string to a unicode-range
 > glyphhanger --whitelist=ABCD
 > glyphhanger --US_ASCII
 > glyphhanger --US_ASCII --whitelist=ABCD
+
+# Convert a unicode-range to a string
+> glyphhanger --whitelist=U+41-44 --string
 ```
 
 ### Use the spider to gather URLs from links
