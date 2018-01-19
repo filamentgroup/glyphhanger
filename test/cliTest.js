@@ -11,11 +11,14 @@ var removeFile = function( filePath ) {
 
 describe( "glyphhanger cli", function() {
 	it( "Produced a file", function ( done ) {
+		this.timeout( 10000 );
+
 		childProcess.exec(`node index.js --whitelist=ABC --subset=${fontPath} --formats=ttf`, function(err) {
       if ( err ) {
 				done( err );
 			} else {
-				var subsetPath = fontPath.split( ".ttf" ).join( "-subset.ttf" )
+				var subsetPath = fontPath.split( ".ttf" ).join( "-subset.ttf" );
+				console.log( subsetPath );
 				var subset = fs.existsSync( subsetPath );
 				assert.ok( subset );
 				removeFile( subsetPath );

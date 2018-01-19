@@ -1,13 +1,11 @@
 #!/usr/bin/env node
 var argv = require( "minimist" )( process.argv.slice(2) );
-var glob = require( "glob" );
 var GlyphHangerFormat = require( "./src/GlyphHangerFormat" );
 var GlyphHangerWhitelist = require( "./src/GlyphHangerWhitelist" );
 var PhantomGlyphHanger = require( "./src/PhantomGlyphHanger" );
 var PhantomGlyphHangerSpider = require( "./src/PhantomGlyphHangerSpider" );
 var GlyphHangerSubset = require( "./src/GlyphHangerSubset" );
 
-var formats = new GlyphHangerFormat( argv.formats );
 var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, argv.US_ASCII );
 
 var pgh = new PhantomGlyphHanger();
@@ -21,12 +19,12 @@ pgh.setWhitelist( whitelist );
 pgh.setSubset( argv.subset );
 
 var subset = new GlyphHangerSubset();
-subset.setFormats( formats );
+if( argv.formats ) {
+	subset.setFormats( argv.formats );
+}
 
 if( argv.subset ) {
-	var fontFiles = glob.sync( argv.subset );
-
-	subset.setFontFiles( fontFiles );
+	subset.setFontFilesGlob( argv.subset );
 
 	// using URLs
 	pgh.setFetchUrlsCallback(function( unicodes ) {

@@ -1,6 +1,10 @@
-function GlyphHangerFormat( formats ) {
+function GlyphHangerFormat( formatsString ) {
+	this.setFormats( formatsString || "ttf,woff2,woff-zopfli" );
+};
+
+GlyphHangerFormat.prototype.setFormats = function( formatsString ) {
 	var lookup = {};
-	( formats || "ttf,woff2,woff-zopfli" ).split( "," ).forEach(function( format ) {
+	formatsString.split( "," ).forEach(function( format ) {
 		lookup[ format.trim().toLowerCase() ] = true;
 	})
 	this.formats = lookup;

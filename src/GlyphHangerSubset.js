@@ -1,18 +1,51 @@
-var shell = require( "shelljs" );
-var parsePath = require( "parse-filepath" );
-var fs = require( "fs" );
-var filesize = require( "filesize" );
-var path = require( "path" );
-var chalk = require( "chalk" );
+const shell = require( "shelljs" );
+const parsePath = require( "parse-filepath" );
+const fs = require( "fs" );
+const filesize = require( "filesize" );
+const path = require( "path" );
+const chalk = require( "chalk" );
+const glob = require( "glob" );
+const GlyphHangerFormat = require("./GlyphHangerFormat");
 
-function GlyphHangerSubset() {}
+function GlyphHangerSubset() {
+	this.formats = new GlyphHangerFormat();
+}
+
+GlyphHangerSubset.prototype.setFontFilesGlob = function( ttfFilesGlob ) {
+	this.fontPaths = glob.sync( ttfFilesGlob );
+};
 
 GlyphHangerSubset.prototype.setFontFiles = function( ttfFontFiles ) {
 	this.fontPaths = ttfFontFiles;
 };
 
-GlyphHangerSubset.prototype.setFormats = function( formatObj ) {
-	this.formats = formatObj;
+GlyphHangerSubset.prototype.setFormats = function( formatsString ) {
+	if( formatsString ) {
+		this.formats.setFormats( formatsString );
+	}
+};
+
+GlyphHangerSubset.prototype.getFilenames = function( ttfPath ) {
+	var files = [];
+	if( this.formats.hasFormat( "ttf" ) ) {
+		files.push(this.getFilenameFromTTFPath(ttfPath));
+	}
+	if( this.formats.hasFormat( "woff" ) ) {
+		files.push(this.getFilenameFromTTFPath(ttfPath, "woff"));
+	}
+	if( this.formats.hasFormat( "woff-zopfli" ) ) {
+		files.push(this.getFilenameFromTTFPath(ttfPath, "woff", true));
+	}
+	if( this.formats.hasFormat( "woff2" ) ) {
+		files.push(this.getFilenameFromTTFPath(ttfPath, "woff2"));
+	}
+	return files;
+};
+
+GlyphHangerSubset.prototype.getFilenameFromTTFPath = function( ttfPath, format, useZopfli ) {
+	var fontPath = parsePath( ttfPath );
+	var outputFilename = fontPath.name + "-subset" + ( useZopfli ? ".zopfli" : "" ) + ( format ? "." + format : fontPath.ext );
+	return outputFilename;
 };
 
 GlyphHangerSubset.prototype.subsetAll = function( unicodes, formats ) {
@@ -33,9 +66,8 @@ GlyphHangerSubset.prototype.subsetAll = function( unicodes, formats ) {
 };
 
 GlyphHangerSubset.prototype.subset = function( inputFile, unicodes, format, useZopfli ) {
-	var fontPath = parsePath( inputFile );
-	var outputFilename = fontPath.name + "-subset" + ( useZopfli ? ".zopfli" : "" ) + ( format ? "." + format : fontPath.ext );
-	var outputFullPath = path.join( fontPath.dir, outputFilename );
+	var outputFilename = this.getFilenameFromTTFPath( inputFile, format, useZopfli );
+	var outputFullPath = path.join( parsePath( inputFile ).dir, outputFilename );
 	var cmd = [ "pyftsubset" ];
 	cmd.push( inputFile );
 	cmd.push( "--output-file=" + outputFullPath );
