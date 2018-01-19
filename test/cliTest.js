@@ -5,25 +5,16 @@ var fs = require( "fs" );
 
 var fontPath = "test/fonts/sourcesanspro-regular.ttf"
 
-var removeFile = function( filePath ) {
-	fs.unlinkSync( filePath );
-}
-
 describe( "glyphhanger cli", function() {
-	it( "Produced a file", function ( done ) {
+	it( "Produced a file", function () {
 		this.timeout( 10000 );
 
-		childProcess.exec(`node index.js --whitelist=ABC --subset=${fontPath} --formats=ttf`, function(err) {
-      if ( err ) {
-				done( err );
-			} else {
-				var subsetPath = fontPath.split( ".ttf" ).join( "-subset.ttf" );
-				console.log( subsetPath );
-				var subset = fs.existsSync( subsetPath );
-				assert.ok( subset );
-				removeFile( subsetPath );
-				done();
-			};
-		})
+		let output = childProcess.execSync(`node index.js --whitelist=ABC --subset=${fontPath} --formats=ttf`);
+		console.log( "childProcess output: ", output.toString() );
+
+		var subsetPath = fontPath.split( ".ttf" ).join( "-subset.ttf" );
+		var subset = fs.existsSync( subsetPath );
+		assert.ok( subset );
+		fs.unlinkSync( subsetPath );
 	})
 });
