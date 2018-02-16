@@ -11,8 +11,14 @@ PhantomGlyphHanger.prototype.setSubset = function( subset ) {
 PhantomGlyphHanger.prototype.setFetchUrlsCallback = function( callback ) {
 	this.fetchUrlsCallback = callback;
 };
+PhantomGlyphHanger.prototype.setJson = function( outputJson ) {
+	this.outputJson = !!outputJson;
+};
 PhantomGlyphHanger.prototype.setVerbose = function( verbose ) {
 	this.verbose = !!verbose;
+};
+PhantomGlyphHanger.prototype.setClassName = function( classname ) {
+	this.className = classname;
 };
 PhantomGlyphHanger.prototype.setUnicodesOutput = function( showString ) {
 	this.unicodes = !showString;
@@ -30,6 +36,8 @@ PhantomGlyphHanger.prototype.getArguments = function() {
 	args.push( !this.subset && this.verbose ); // verbose mode: forced off when subsetting
 	args.push( this.subset ? true : this.unicodes ); // unicodes mode: forced on when subsetting
 	args.push( this.whitelist.getWhitelistAsUnicodes() );
+	args.push( this.outputJson ); // per font-family
+	args.push( this.className ); // added to document
 
 	return args;
 };

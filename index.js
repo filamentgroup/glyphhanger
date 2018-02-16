@@ -17,6 +17,8 @@ if( argv.unicodes ) {
 pgh.setUnicodesOutput( argv.string );
 pgh.setWhitelist( whitelist );
 pgh.setSubset( argv.subset );
+pgh.setJson( argv.json );
+pgh.setClassName( argv.classname );
 
 var subset = new GlyphHangerSubset();
 if( argv.formats ) {

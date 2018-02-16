@@ -9,11 +9,11 @@ var fontPath = "test/fonts/sourcesanspro-regular.ttf"
 describe( "glyphhanger cli", function() {
 	it( "Produced a file", function () {
 		this.timeout( 10000 );
-		console.log( "__dirname:", __dirname );
+		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node index.js --whitelist=ABC --subset=${fontPath} --formats=ttf`, {
 			cwd: path.resolve(__dirname, "..")
 		});
-		console.log( "childProcess output: ", output.toString() );
+		// console.log( "childProcess output: ", output.toString() );
 
 		var subsetPath = fontPath.split( ".ttf" ).join( "-subset.ttf" );
 		var subset = fs.existsSync( subsetPath );

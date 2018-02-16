@@ -1,6 +1,6 @@
 {
   "name": "glyphhanger",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A tool to ease webfont subsetting.",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,9 @@
   "dependencies": {
     "chalk": "^2.3.0",
     "characterset": "^1.2.0",
+    "debug": "^3.1.0",
     "filesize": "^3.5.11",
+    "font-stats": "^1.0.1",
     "glob": "^7.1.2",
     "minimist": "^1.2.0",
     "parse-filepath": "^1.0.2",

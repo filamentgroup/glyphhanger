@@ -9,11 +9,35 @@
 }( this, function( CharacterSet ) {
 
 	var GH = function() {
-		this.set = new CharacterSet();
+		this.globalSet = new CharacterSet();
+		this.fontFamilySets = {};
+		this.displayFontFamilyNames = {};
+		this.defaultFontFamily = "serif";
 
 		if( typeof window !== "undefined" ) {
 			this.win = window;
 		}
+	};
+
+	GH.prototype.getFontFamilyNameFromNode = function(node) {
+		var fontFamilyList = node.parentNode ? (this.win.getComputedStyle( node.parentNode ).getPropertyValue( "font-family" ) || this.defaultFontFamily) : null;
+		return this.getFontFamilyName( fontFamilyList );
+	};
+
+	GH.prototype.getFontFamilyName = function(fontFamilyList) {
+		if( !fontFamilyList ) {
+			return "";
+		}
+
+		var split = fontFamilyList.split(",").map(function(family) {
+			// remove whitespace
+			return family.trim();
+		}).map(function(family) {
+			// remove quotes
+			return family.replace(/[\"\']/g, "");
+		});
+
+		return split.length ? split[0] : "";
 	};
 
 	GH.prototype.setEnv = function(win) {
@@ -26,7 +50,13 @@
 				// only non-empty values
 				return this.hasValue( node );
 			}.bind( this )).forEach( function( node ) {
-				this.saveGlyphs( this.getNodeValue( node ) );
+				var fontFamily = this.getFontFamilyNameFromNode( node );
+				this.displayFontFamilyNames[ fontFamily.toLowerCase() ] = fontFamily;
+				var text = this.getNodeValue( node );
+				// TODO somehow get this into `debug()` output
+				// console.log( "font-family `" + fontFamily + "` has text: ", text );
+
+				this.saveGlyphs( text, fontFamily.toLowerCase() );
 			}.bind( this ));
 		}
 	}
@@ -66,8 +96,9 @@
 	GH.prototype.findTextNodes = function( node ) {
 		// via http://stackoverflow.com/questions/10730309/find-all-text-nodes-in-html-page
 		var all = [];
+		var node;
 		for( node = node.firstChild; node; node = node.nextSibling ) {
-			if( node.nodeType == 3 ) {
+			if( node.nodeType === 3 ) {
 				all.push( node );
 			} else {
 				all = all.concat( this.findTextNodes( node ) );
@@ -76,16 +107,39 @@
 		return all;
 	};
 
-	GH.prototype.saveGlyphs = function( text ) {
-		this.set = this.set.union( new CharacterSet( text ) );
+	GH.prototype.saveGlyphs = function( text, fontFamily ) {
+		var set = new CharacterSet( text );
+		this.globalSet = this.globalSet.union( set );
+
+		if( fontFamily ) {
+			this.fontFamilySets[ fontFamily ] = this.getFamilySet( fontFamily ).union( set );
+		}
+	};
+
+	GH.prototype.getFamilySet = function(fontFamily) {
+		return fontFamily in this.fontFamilySets ? this.fontFamilySets[ fontFamily ] : new CharacterSet();
 	};
 
 	GH.prototype.getGlyphs = function() {
-		return this.set.toArray();
+		return this.globalSet.toArray();
 	};
 
 	GH.prototype.toString = function() {
-		return this.set.toString();
+		return this.globalSet.toString();
+	};
+
+	GH.prototype.toJSONString = function() {
+		return JSON.stringify(this.toJSON());
+	};
+
+	GH.prototype.toJSON = function() {
+		var obj = {};
+		for( var family in this.fontFamilySets ) {
+			obj[this.displayFontFamilyNames[family]] = this.fontFamilySets[family].toArray();
+		}
+		obj['*'] = this.getGlyphs();
+
+		return obj;
 	};
 
 	return GH;
