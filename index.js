@@ -3,8 +3,8 @@ var argv = require( "minimist" )( process.argv.slice(2) );
 var GlyphHangerFormat = require( "./src/GlyphHangerFormat" );
 var GlyphHangerWhitelist = require( "./src/GlyphHangerWhitelist" );
 var PhantomGlyphHanger = require( "./src/PhantomGlyphHanger" );
-var PhantomGlyphHangerSpider = require( "./src/PhantomGlyphHangerSpider" );
 var GlyphHangerSubset = require( "./src/GlyphHangerSubset" );
+var MultipleSpiderPigs = require( "./src/MultipleUrlSpiderPig" );
 
 var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, argv.US_ASCII );
 
@@ -57,18 +57,23 @@ if( argv.version ) {
 	pgh.outputHelp();
 } else if( argv._ && argv._.length ) {
 	if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
-		var spider = new PhantomGlyphHangerSpider();
-		spider.setLimit( argv[ 'spider-limit' ] );
+		(async function() {
+			let sp = new MultipleSpiderPigs();
+			sp.setLimit(argv[ 'spider-limit' ]);
+			await sp.fetchUrls(argv._);
 
-		spider.findUrls( argv._, function( urls ) {
+			let urls = sp.getUrlsWithLimit();
+
 			if( argv.verbose ) {
 				urls.forEach(function( url, index ) {
 					console.log( "glyphhanger-spider found (" + ( index + 1 ) + "): " + url );
 				});
 			}
 
+			await sp.finish();
+
 			pgh.fetchUrls( urls );
-		});
+		})();
 	} else {
 		pgh.fetchUrls( argv._ );
 	}

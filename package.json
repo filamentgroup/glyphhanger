@@ -24,6 +24,7 @@
     "glyphhanger": "./index.js"
   },
   "dependencies": {
+    "@zachleat/spider-pig": "^1.0.2",
     "chalk": "^2.3.0",
     "characterset": "^1.2.0",
     "debug": "^3.1.0",

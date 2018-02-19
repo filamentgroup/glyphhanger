@@ -23,10 +23,13 @@ function requestUrl( url, documentClassName ) {
 					page.injectJs( "glyphhanger.js" ) ) {
 
 				var json = page.evaluate( function(docClassName) {
-					if(docClassName) {
+					if(docClassName && docClassName !== "undefined") {
 						// add to both the documentElement and document.body because why not
 						document.documentElement.className += " " + docClassName;
-						document.body.className += " " + docClassName;
+
+						if( "body" in document ) {
+							document.body.className += " " + docClassName;
+						}
 					}
 
 					var hanger = new GlyphHanger();
