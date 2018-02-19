@@ -38,6 +38,7 @@ if( argv.subset ) {
 // glyphhanger --help
 // glyphhanger
 // glyphhanger http://localhost/
+// glyphhanger http://localhost/ http://localhost2/					(multiple urls are welcome)
 // glyphhanger http://localhost/ --spider 									(limit default 10)
 // glyphhanger http://localhost/ --spider-limit							(limit default 10)
 // glyphhanger http://localhost/ --spider-limit=0 					(no limit)
@@ -57,19 +58,15 @@ if( argv.version ) {
 	pgh.outputHelp();
 } else if( argv._ && argv._.length ) {
 	if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
+
+		// Spider
 		(async function() {
 			let sp = new MultipleSpiderPigs();
+			sp.setVerbose( argv.verbose );
 			sp.setLimit(argv[ 'spider-limit' ]);
 			await sp.fetchUrls(argv._);
 
 			let urls = sp.getUrlsWithLimit();
-
-			if( argv.verbose ) {
-				urls.forEach(function( url, index ) {
-					console.log( "glyphhanger-spider found (" + ( index + 1 ) + "): " + url );
-				});
-			}
-
 			await sp.finish();
 
 			pgh.fetchUrls( urls );

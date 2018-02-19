@@ -4,6 +4,7 @@ class MultipleSpiderPig {
 	constructor() {
 		this.limit = 10;
 		this.urls = [];
+		this.isVerbose = false;
 	}
 
 	async getPiggy() {
@@ -13,6 +14,10 @@ class MultipleSpiderPig {
 		}
 
 		return this.piggy;
+	}
+
+	setVerbose(isVerbose) {
+		this.isVerbose = !!isVerbose;
 	}
 
 	setLimit(newLimit) {
@@ -38,12 +43,20 @@ class MultipleSpiderPig {
 		}
 	}
 
-	getUrlsWithLimit(urls) {
+	getUrlsWithLimit() {
+		let urls = this.urls;
+
 		if( this.limit ) {
-			return this.urls.slice(0, this.limit );
+			urls = this.urls.slice(0, this.limit );
 		}
 
-		return this.urls;
+		if( this.isVerbose ) {
+			urls.forEach(function( url, index ) {
+				console.log( "glyphhanger found (" + ( index + 1 ) + "): " + url );
+			});
+		}
+
+		return urls;
 	}
 
 	async finish() {
