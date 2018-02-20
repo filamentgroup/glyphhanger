@@ -1,9 +1,16 @@
 const chalk = require( "chalk" );
 const path = require( "path" );
-const CharacterSet = require( "characterset" );
+const { URL } = require("url");
 const puppeteer = require('puppeteer');
+const connect = require("connect");
+const serveStatic = require("serve-static");
+const CharacterSet = require( "characterset" );
 const GlyphHangerWhitelist = require( "./GlyphHangerWhitelist" );
 const debug = require("debug")("glyphhanger");
+const debugNodes = require("debug")("glyphhanger:nodes");
+
+const SITE_PATH = path.resolve(__dirname, "..");
+const SERVER_PORT = 8091;
 
 class GlyphHanger {
 	constructor() {
@@ -12,6 +19,15 @@ class GlyphHanger {
 		};
 
 		this.whitelist = new GlyphHangerWhitelist();
+	}
+
+	getStaticServer() {
+		return new Promise(function(resolve, reject) {
+			let server = connect().use(serveStatic(SITE_PATH)).listen(SERVER_PORT, function() {
+				debug(`Web server started on ${SERVER_PORT} for ${SITE_PATH}.`);
+				resolve(server);
+			});
+		});
 	}
 
 	async getBrowser() {
@@ -77,10 +93,24 @@ class GlyphHanger {
 	}
 
 	async _getPage(url) {
+		let urlObj;
+		try {
+			urlObj = new URL(url);
+		} catch(e) {
+			if( !this.staticServer ) {
+				this.staticServer = await this.getStaticServer();
+			}
+
+			urlObj = new URL(url, "http://localhost:" + SERVER_PORT + "/");
+			debug("Transforming %o to new URL %o", url, urlObj.toString());
+		}
+
 		let browser = await this.getBrowser();
 		let page = await browser.newPage();
 
-		await page.goto(url, {
+		debug("Navigating to %o", urlObj.toString());
+
+		await page.goto(urlObj.toString(), {
 			waitUntil: ["load", "networkidle0"]
 		});
 
@@ -93,15 +123,15 @@ class GlyphHanger {
 		let page = await this._getPage(url);
 
 		page.on("console", function(msg) {
-			debug("(headless browser console): %o", msg.text());
+			debugNodes("(headless browser console): %o", msg.text());
 		});
 
 		await page.addScriptTag({
-			path: "node_modules/characterset/lib/characterset.js"
+			path: path.resolve(__dirname, "../node_modules/characterset/lib/characterset.js")
 		});
 
 		await page.addScriptTag({
-			path: "glyphhanger.js"
+			path: path.resolve(__dirname, "../src/glyphhanger-script.js")
 		});
 
 		let json = await page.evaluate( function(docClassName) {
@@ -130,6 +160,11 @@ class GlyphHanger {
 
 		let browser = await this.getBrowser();
 		await browser.close();
+
+		if( this.staticServer ) {
+			let server = await this.staticServer;
+			server.close();
+		}
 	}
 
 	getOutputForSet(set) {

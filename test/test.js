@@ -6,7 +6,7 @@ const { JSDOM } = jsdom;
 const window = (new JSDOM(`<!doctype html><html><body></body></html>`)).window;
 const document = window.document;
 
-const GlyphHangerScript = require( "../glyphhanger.js" );
+const GlyphHangerScript = require( "../src/glyphhanger-script.js" );
 
 describe( "glyphhanger", function() {
 	describe( "Simple node", function() {
