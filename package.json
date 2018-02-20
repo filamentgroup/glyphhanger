@@ -2,7 +2,7 @@
   "name": "glyphhanger",
   "version": "2.0.3",
   "description": "A tool to ease webfont subsetting.",
-  "main": "index.js",
+  "main": "src/GlyphHanger.js",
   "scripts": {
     "test": "mocha"
   },
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/filamentgroup/glyphhanger#readme",
   "bin": {
-    "glyphhanger": "./index.js"
+    "glyphhanger": "./cmd.js"
   },
   "dependencies": {
     "@zachleat/spider-pig": "^1.0.2",

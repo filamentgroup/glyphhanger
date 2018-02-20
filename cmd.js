@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 var argv = require( "minimist" )( process.argv.slice(2) );
+var GlyphHanger = require( "./src/GlyphHanger" );
 var GlyphHangerFormat = require( "./src/GlyphHangerFormat" );
 var GlyphHangerWhitelist = require( "./src/GlyphHangerWhitelist" );
-var PhantomGlyphHanger = require( "./src/PhantomGlyphHanger" );
 var GlyphHangerSubset = require( "./src/GlyphHangerSubset" );
 var MultipleSpiderPigs = require( "./src/MultipleUrlSpiderPig" );
 
 var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, argv.US_ASCII );
 
-var pgh = new PhantomGlyphHanger();
+var pgh = new GlyphHanger();
 pgh.setVerbose( argv.verbose );
 if( argv.unicodes ) {
 	console.log( '--unicodes was made default in v2.0. To output characters instead of code points, use --string' );
@@ -80,7 +80,7 @@ if( argv.version ) {
 		subset.subsetAll( !whitelist.isEmpty() ? whitelist.getWhitelistAsUnicodes() : whitelist.getUniversalRangeAsUnicodes() );
 	} else if( !whitelist.isEmpty() ) {
 		// not subsetting, just output the code points (can convert whitelist string to code points)
-		pgh.output();
+		pgh.outputUnicodes();
 	} else {
 		pgh.outputHelp();
 	}
