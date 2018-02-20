@@ -2,13 +2,16 @@ const chalk = require( "chalk" );
 const path = require( "path" );
 const CharacterSet = require( "characterset" );
 const puppeteer = require('puppeteer');
-const pluginName = "glyphhanger"
+const GlyphHangerWhitelist = require( "./GlyphHangerWhitelist" );
+const debug = require("debug")("glyphhanger");
 
 class GlyphHanger {
 	constructor() {
 		this.sets = {
 			"*": new CharacterSet()
 		};
+
+		this.whitelist = new GlyphHangerWhitelist();
 	}
 
 	async getBrowser() {
@@ -65,6 +68,14 @@ class GlyphHanger {
 		}
 	}
 
+	getUniversalSet() {
+		return this.sets['*'];
+	};
+
+	getSets() {
+		return this.sets;
+	}
+
 	async _getPage(url) {
 		let browser = await this.getBrowser();
 		let page = await browser.newPage();
@@ -77,11 +88,13 @@ class GlyphHanger {
 	}
 
 	async _fetchUrl( url ) {
-		if( this.getIsVerbose() ) {
-			console.log( pluginName + " requesting:", url );
-		}
+		debug( "requesting: %o", url );
 
 		let page = await this._getPage(url);
+
+		page.on("console", function(msg) {
+			debug("(headless browser console): %o", msg.text());
+		});
 
 		await page.addScriptTag({
 			path: "node_modules/characterset/lib/characterset.js"
@@ -117,12 +130,6 @@ class GlyphHanger {
 
 		let browser = await this.getBrowser();
 		await browser.close();
-
-		this.output();
-
-		if( this.fetchUrlsCallback ) {
-			this.fetchUrlsCallback( this.sets['*'].toHexRangeString() );
-		}
 	}
 
 	getOutputForSet(set) {
@@ -135,15 +142,20 @@ class GlyphHanger {
 		}
 	}
 
+	complete() {
+		this.output();
+
+		if( this.fetchUrlsCallback ) {
+			this.fetchUrlsCallback( this.sets['*'].toHexRangeString() );
+		}
+	}
+
 	outputUnicodes( chars ) {
 		console.log( this.unicodes ? this.whitelist.getWhitelistAsUnicodes() : this.whitelist.getWhitelist() );
 	}
 
 	output() {
 		var outputStr = [];
-		if( this.getIsVerbose() ) {
-			console.log( pluginName + " output:" );
-		}
 
 		if( this.outputJson ) {
 			// JSON format

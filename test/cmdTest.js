@@ -10,7 +10,7 @@ describe( "glyphhanger cli", function() {
 	it( "Produced a file", function () {
 		this.timeout( 10000 );
 		// console.log( "__dirname:", __dirname );
-		let output = childProcess.execSync(`node index.js --whitelist=ABC --subset=${fontPath} --formats=ttf`, {
+		let output = childProcess.execSync(`node cmd.js --whitelist=ABC --subset=${fontPath} --formats=ttf`, {
 			cwd: path.resolve(__dirname, "..")
 		});
 		// console.log( "childProcess output: ", output.toString() );

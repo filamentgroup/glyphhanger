@@ -53,8 +53,7 @@
 				var fontFamily = this.getFontFamilyNameFromNode( node );
 				this.displayFontFamilyNames[ fontFamily.toLowerCase() ] = fontFamily;
 				var text = this.getNodeValue( node );
-				// TODO somehow get this into `debug()` output
-				// console.log( "font-family `" + fontFamily + "` has text: ", text );
+				console.log( "font-family `" + fontFamily + "` has text: ", text );
 
 				this.saveGlyphs( text, fontFamily.toLowerCase() );
 			}.bind( this ));
@@ -62,7 +61,7 @@
 	}
 
 	GH.prototype.fakeInnerText = function( node ) {
-		var value = node.nodeValue;
+		var value = node.nodeValue.trim();
 
 		if( node.nodeType !== 3 ) {
 			return "";
@@ -70,6 +69,7 @@
 
 		if( node.parentNode ) {
 			var textTransform = this.win.getComputedStyle( node.parentNode ).getPropertyValue( "text-transform" );
+			console.log( "textTransform:", textTransform );
 			switch (textTransform) {
 				case "uppercase":
 					return value.toUpperCase();
@@ -82,11 +82,16 @@
 			}
 		}
 
+		console.log( "returning nodeValue", value );
+
 		return value;
 	};
 
 	GH.prototype.getNodeValue = function( node ) {
-		return node.innerText || this.fakeInnerText( node ) || "";
+		var innerText = this.fakeInnerText( node );
+		console.log( "innerText:", node.innerText );
+		console.log( "fakeInnerText:", innerText );
+		return node.innerText || innerText || "";
 	};
 
 	GH.prototype.hasValue = function( node ) {
