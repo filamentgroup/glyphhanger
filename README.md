@@ -103,6 +103,21 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff (was 145.06 KB
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 2.24 KB)
 ```
 
+#### Output a @font-face block with `--css`
+
+```
+> glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=*.ttf --css
+
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff (was 145.06 KB, now 2.88 KB)
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 2.24 KB)
+
+@font-face {
+  font-family: Source Sans;
+  src: url(sourcesanspro-regular-subset.woff2) format("woff2"), url(sourcesanspro-regular-subset.woff) format("woff");
+  unicode-range: U+41-44;
+}
+```
+
 ### Whitelist Characters
 
 ```

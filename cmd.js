@@ -22,17 +22,14 @@ gh.setClassName( argv.classname );
 gh.setFamilies( argv.family );
 
 var subset = new GlyphHangerSubset();
+subset.setCSSOutput( argv.css );
+subset.setFamilies( argv.family );
+
 if( argv.formats ) {
 	subset.setFormats( argv.formats );
 }
-
 if( argv.subset ) {
 	subset.setFontFilesGlob( argv.subset );
-
-	// using URLs
-	gh.setFetchUrlsCallback(function( unicodes ) {
-		subset.subsetAll( unicodes );
-	});
 }
 
 // glyphhanger --version
@@ -59,6 +56,12 @@ if( argv.version ) {
 	gh.outputHelp();
 } else if( argv._ && argv._.length ) {
 	(async function() {
+		if( argv.subset ) {
+			gh.onAfterUnicodes(function( unicodes ) {
+				subset.subsetAll( unicodes );
+			});
+		}
+
 		// Spider
 		if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
 			let sp = new MultipleSpiderPigs();

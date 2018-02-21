@@ -32,8 +32,8 @@ class GlyphHanger {
 		this.families = families;
 	}
 
-	setFetchUrlsCallback( callback ) {
-		this.fetchUrlsCallback = callback;
+	onAfterUnicodes( callback ) {
+		this.onAfterUnicodes = callback;
 	}
 
 	setJson( outputJson ) {
@@ -183,8 +183,8 @@ class GlyphHanger {
 
 		this.output(set);
 
-		if( this.fetchUrlsCallback ) {
-			this.fetchUrlsCallback( set.toHexRangeString() );
+		if( this.onAfterUnicodes ) {
+			this.onAfterUnicodes( set.toHexRangeString() );
 		}
 	}
 
