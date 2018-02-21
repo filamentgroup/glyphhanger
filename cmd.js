@@ -10,7 +10,6 @@ const debug = require( "debug" )( "glyphhanger:cli" );
 var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, argv.US_ASCII );
 
 var gh = new GlyphHanger();
-gh.setVerbose( argv.verbose );
 if( argv.unicodes ) {
 	console.log( '--unicodes was made default in v2.0. To output characters instead of code points, use --string' );
 	require( "shelljs" ).exit(1);
@@ -62,7 +61,6 @@ if( argv.version ) {
 		// Spider
 		if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
 			let sp = new MultipleSpiderPigs();
-			sp.setVerbose( argv.verbose );
 			sp.setLimit(argv[ 'spider-limit' ]);
 			await sp.fetchUrls(argv._);
 

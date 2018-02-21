@@ -6,7 +6,6 @@ class MultipleSpiderPig {
 	constructor() {
 		this.limit = 10;
 		this.urls = [];
-		this.isVerbose = false;
 		debug("initializing MultipleSpiderPig");
 	}
 
@@ -17,10 +16,6 @@ class MultipleSpiderPig {
 		}
 
 		return this.piggy;
-	}
-
-	setVerbose(isVerbose) {
-		this.isVerbose = !!isVerbose;
 	}
 
 	setLimit(newLimit) {
@@ -66,11 +61,9 @@ class MultipleSpiderPig {
 			urls = this.urls.slice(0, this.limit );
 		}
 
-		if( this.isVerbose ) {
-			urls.forEach(function( url, index ) {
-				console.log( "glyphhanger found (" + ( index + 1 ) + "): " + url );
-			});
-		}
+		urls.forEach(function( url, index ) {
+			debug( "glyphhanger found (" + ( index + 1 ) + "): " + url );
+		});
 
 		return urls;
 	}

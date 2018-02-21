@@ -36,20 +36,12 @@ class GlyphHanger {
 		this.outputJson = !!outputJson;
 	}
 
-	setVerbose( verbose ) {
-		this.isVerbose = !!verbose;
-	}
-
 	setClassName( classname ) {
 		this.className = classname;
 	}
 
 	setUnicodesOutput( showString ) {
 		this.unicodes = !showString;
-	}
-
-	getIsVerbose() {
-		return !this.subset && this.isVerbose;
 	}
 
 	getIsCodePoints() {
@@ -180,16 +172,6 @@ class GlyphHanger {
 				jsonLines.push("\"" + family + "\": \"" + this.getOutputForSet( this.sets[family] ) + "\"");
 			}
 			outputStr.push("{" + jsonLines.join(",") + "}");
-		} else if( this.getIsVerbose() ) {
-			// output each family set individually, but not in json format
-			for( var family in this.sets ) {
-				var glyphCount = this.sets[family].getSize();
-				var familyStr = [];
-				familyStr.push( "font-family: " + family + ", " + glyphCount + " glyph" + (glyphCount !== 1 ? 's' : '') );
-				familyStr.push( this.getOutputForSet( this.sets[family] ) );
-
-				outputStr.push(familyStr.join(": "));
-			}
 		} else {
 			// output the combined universal set
 			outputStr.push( this.getOutputForSet( this.sets['*'] ) );
@@ -210,12 +192,13 @@ class GlyphHanger {
 		out.push( "       glyphhanger --whitelist=abcdef --subset=*.ttf" );
 		out.push( "" );
 		out.push( "arguments: " );
-		out.push( "  --verbose" );
 		out.push( "  --version" );
 		out.push( "  --whitelist=abcdef" );
 		out.push( "       A list of whitelist characters (optionally also --US_ASCII)." );
 		out.push( "  --string" );
 		out.push( "       Output the actual characters instead of Unicode code point values." );
+		out.push( "  --json" );
+		out.push( "       Show detailed JSON results (including per font-family glyphs for results)." );
 		out.push( "  --subset=*.ttf" );
 		out.push( "       Automatically subsets one or more font files using fonttools `pyftsubset`." );
 		out.push( "  --formats=ttf,woff,woff2,woff-zopfli" );

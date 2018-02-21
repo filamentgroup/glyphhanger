@@ -1,6 +1,6 @@
 # Subset yourself manually with `pyftsubset`
 
-As of GlyphHanger 1.0.5, this can be done automatically with the `--subset` option. For posterity, this method will still work. Don’t use verbose mode, we want to save the output to a file.
+As of GlyphHanger 1.0.5, this can be done automatically with the `--subset` option. For posterity, this method will still work. Don’t use DEBUG mode, we want to save the output to a file.
 
 ```
 > glyphhanger ./test.html > glyphhanger_output

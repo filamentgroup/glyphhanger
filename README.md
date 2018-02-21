@@ -28,7 +28,21 @@ npm install -g glyphhanger
 # multiple URLs, optionally using HTTPS
 > glyphhanger https://google.com https://www.filamentgroup.com
 
+# Show version
+> glyphhanger --version
+
+# See more usage
+> glyphhanger --help
 ```
+
+### Debug Mode
+
+Replaces `--verbose` in `v3.0.0`.
+
+```
+> DEBUG=glyphhanger* glyphhanger http://example.com
+```
+
 
 ### Subset font files automatically
 
@@ -119,16 +133,6 @@ Finds all the `<a href>` elements on the page with *local* (not external) links 
 ```
 
 Default `--spider-limit` is 10. Set to `0` for no limit. This will greatly affect how long the task takes.
-
-### Additional options
-
-```
-# verbose mode
-> glyphhanger https://google.com --verbose
-
-# version
-> glyphhanger --version
-```
 
 ### Installing `pyftsubset`
 
