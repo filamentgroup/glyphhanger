@@ -28,6 +28,10 @@ class GlyphHanger {
 		this.subset = !!subset;
 	}
 
+	setFamilies( families ) {
+		this.families = families;
+	}
+
 	setFetchUrlsCallback( callback ) {
 		this.fetchUrlsCallback = callback;
 	}
@@ -58,6 +62,7 @@ class GlyphHanger {
 				this.sets[family] = new CharacterSet();
 				this.sets[family] = this.sets[family].union( this.whitelist.getCharacterSet() );
 			}
+
 			this.sets[family].add.apply( this.sets[family], results[family] );
 		}
 	}
@@ -68,6 +73,26 @@ class GlyphHanger {
 
 	getSets() {
 		return this.sets;
+	}
+
+	getSetForFamilies(families) {
+		if( typeof families === "string" ) {
+			families = families.split(",").map(family => family.trim());
+		}
+
+		let familyMap = {};
+		for( let familyName of families ) {
+			familyMap[familyName.toLowerCase()] = true;
+		}
+
+		let set = new CharacterSet();
+		for( let family in this.sets ) {
+			if(familyMap[family.toLowerCase()]) {
+				set = set.union( this.sets[family] );
+			}
+		}
+
+		return set;
 	}
 
 	async _getPage(url) {
@@ -151,10 +176,15 @@ class GlyphHanger {
 	}
 
 	complete() {
-		this.output();
+		let set = this.sets['*'];
+		if( this.families && this.families !== true ) {
+			set = this.getSetForFamilies(this.families);
+		}
+
+		this.output(set);
 
 		if( this.fetchUrlsCallback ) {
-			this.fetchUrlsCallback( this.sets['*'].toHexRangeString() );
+			this.fetchUrlsCallback( set.toHexRangeString() );
 		}
 	}
 
@@ -162,10 +192,10 @@ class GlyphHanger {
 		console.log( this.unicodes ? this.whitelist.getWhitelistAsUnicodes() : this.whitelist.getWhitelist() );
 	}
 
-	output() {
+	output(activeSet) {
 		var outputStr = [];
 
-		if( this.outputJson ) {
+		if( this.outputJson || this.families === true ) {
 			// JSON format
 			var jsonLines = [];
 			for( var family in this.sets ) {
@@ -174,7 +204,7 @@ class GlyphHanger {
 			outputStr.push("{" + jsonLines.join(",") + "}");
 		} else {
 			// output the combined universal set
-			outputStr.push( this.getOutputForSet( this.sets['*'] ) );
+			outputStr.push( this.getOutputForSet( activeSet ) );
 		}
 
 		console.log( outputStr.join("\n") );	
@@ -197,6 +227,8 @@ class GlyphHanger {
 		out.push( "       A list of whitelist characters (optionally also --US_ASCII)." );
 		out.push( "  --string" );
 		out.push( "       Output the actual characters instead of Unicode code point values." );
+		out.push( "  --family='Lato,monospace'" );
+		out.push( "       Show only results matching one or more font-family names (comma separated, case insensitive)." );
 		out.push( "  --json" );
 		out.push( "       Show detailed JSON results (including per font-family glyphs for results)." );
 		out.push( "  --subset=*.ttf" );

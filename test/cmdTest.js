@@ -92,7 +92,7 @@ describe( "CLI (urls)", function() {
 		assert.deepEqual( output.toString().trim(), "U+31-34,U+41-44,U+1F4A9");
 	});
 
-	it( "outputs json per font-family", function () {
+	it( "outputs json per font-family (with --json)", function () {
 		this.timeout( 10000 );
 
 		let output = childProcess.execSync(`node cmd.js test/json/families.html --json`, {
@@ -106,6 +106,42 @@ describe( "CLI (urls)", function() {
 			"monospace": "U+64-66",
 			"A Web Font": "U+67-69"
 		});
+	});
+
+	it( "outputs json per font-family (with empty --family)", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/json/families.html --family`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		let json = JSON.parse(output.toString().trim());
+		assert.deepEqual( json, {
+			"*": "U+61-69",
+			"Times New Roman": "U+61-63",
+			"monospace": "U+64-66",
+			"A Web Font": "U+67-69"
+		});
+	});
+
+	it( "outputs results for a single font-family", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/json/families.html --family='A Web Font'`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.deepEqual( output.toString().trim(), "U+67-69" );
+	});
+
+	it( "outputs results for two font-families", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/json/families.html --family='A Web Font, monospace'`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.deepEqual( output.toString().trim(), "U+64-69" );
 	});
 });
 

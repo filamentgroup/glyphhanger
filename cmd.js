@@ -19,6 +19,7 @@ gh.setWhitelist( whitelist );
 gh.setSubset( argv.subset );
 gh.setJson( argv.json );
 gh.setClassName( argv.classname );
+gh.setFamilies( argv.family );
 
 var subset = new GlyphHangerSubset();
 if( argv.formats ) {

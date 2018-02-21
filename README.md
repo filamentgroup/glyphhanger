@@ -28,6 +28,9 @@ npm install -g glyphhanger
 # multiple URLs, optionally using HTTPS
 > glyphhanger https://google.com https://www.filamentgroup.com
 
+# show results for one or more font-family names
+> glyphhanger ./test.html --family='Open Sans, Roboto'
+
 # Show version
 > glyphhanger --version
 
@@ -77,6 +80,17 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB,
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 14.34 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 11.37 KB)
 ```
+
+#### Subset to the glyphs at a URL only using content that matches a specific font-family
+
+```
+> glyphhanger ./test.html --subset=*.ttf --family='Lato,sans-serif'
+
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 24 KB)
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 14.34 KB)
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 11.37 KB)
+```
+
 
 #### Specify the formats to output
 

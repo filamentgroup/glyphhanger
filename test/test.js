@@ -1,13 +1,14 @@
 const assert = require( "assert" );
 const path = require( "path" );
 const jsdom = require("jsdom");
+const GlyphHanger = require( "../src/GlyphHanger" );
 const { JSDOM } = jsdom;
 const window = (new JSDOM(`<!doctype html><html><body></body></html>`)).window;
 const document = window.document;
 
 const GlyphHangerScript = require( "../src/glyphhanger-script.js" );
 
-describe( "glyphhanger", function() {
+describe( "GlyphHanger Injected Script Tests", function() {
 	describe( "Simple node", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "abc";
@@ -223,3 +224,45 @@ describe( "glyphhanger", function() {
 	});
 });
 
+describe( "GlyphHanger Tests", function() {
+	describe( "Add to sets", function() {
+		it( "Sets should have the right keys", function() {
+			var gh = new GlyphHanger();
+			gh.addToSets({
+				"*": [44,45,46],
+				"Open Sans": [44,45,46]
+			});
+
+			assert.deepEqual( Object.keys(gh.sets), ["*", "Open Sans"] );
+		});
+	});
+	describe( "getSetForFamilies", function() {
+		var gh = new GlyphHanger();
+		gh.addToSets({
+			"*": [9,44,45,46,47,48],
+			"Open Sans": [44,45,46],
+			"Lato": [44,47,48],
+			"Roboto": [9]
+		});
+
+		it( "empty string should return empty set", function() {
+			assert.deepEqual( gh.getSetForFamilies("").toArray(), [] );
+		});
+
+		it( "Open Sans should show only the code points for Open Sans", function() {
+			assert.deepEqual( gh.getSetForFamilies("Open Sans").toArray(), [44,45,46] );
+		});
+
+		it( "open sans (case insensitive) should show only the code points for Open Sans", function() {
+			assert.deepEqual( gh.getSetForFamilies("open sans").toArray(), [44,45,46] );
+		});
+
+		it( "OPEN SANS (case insensitive) should show only the code points for Open Sans", function() {
+			assert.deepEqual( gh.getSetForFamilies("OPEN SANS").toArray(), [44,45,46] );
+		});
+
+		it( "Lato, Open Sans should show only the code points for Open Sans and Lato", function() {
+			assert.deepEqual( gh.getSetForFamilies("Lato, Open Sans").toArray(), [44,45,46,47,48] );
+		});
+	});
+});

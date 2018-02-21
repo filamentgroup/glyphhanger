@@ -5,7 +5,7 @@ const { URL } = require("url");
 const debug = require("debug")("glyphhanger:webserver");
 
 const SITE_PATH = path.resolve(__dirname, "..");
-const SERVER_PORT = 8092;
+const SERVER_PORT = 8093;
 
 class WebServer {
 	static isValidUrl(url) {
