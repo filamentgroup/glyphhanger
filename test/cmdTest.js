@@ -7,7 +7,6 @@ var path = require( "path" );
 describe( "CLI (version, help)", function() {
 	it( "outputs version", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js --version`, {
 			cwd: path.resolve(__dirname, "..")
 		});
@@ -18,7 +17,6 @@ describe( "CLI (version, help)", function() {
 
 	it( "outputs help with --help", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js --help`, {
 			cwd: path.resolve(__dirname, "..")
 		});
@@ -28,7 +26,6 @@ describe( "CLI (version, help)", function() {
 
 	it( "outputs help (no arguments)", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js`, {
 			cwd: path.resolve(__dirname, "..")
 		});
@@ -50,7 +47,6 @@ describe( "CLI (urls)", function() {
 
 	it( "can use multiple urls", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js test/multiple/one.html test/multiple/two.html`, {
 			cwd: path.resolve(__dirname, "..")
 		});
@@ -60,7 +56,6 @@ describe( "CLI (urls)", function() {
 
 	it( "can use spider", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js test/urls/root.html --spider`, {
 			cwd: path.resolve(__dirname, "..")
 		});
@@ -70,12 +65,31 @@ describe( "CLI (urls)", function() {
 
 	it( "can use spider with limit", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js test/urls/root.html --spider-limit=2`, {
 			cwd: path.resolve(__dirname, "..")
 		});
 
 		assert.equal( output.toString().trim(), "U+41-44" );
+	});
+
+	it( "works with emoji (on a local html file)", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/test-emoji.html`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.deepEqual( output.toString().trim(), "U+31-34,U+41-44,U+1F4A9");
+	});
+
+	it( "works with emoji (on a local txt file)", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/test-emoji.txt`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.deepEqual( output.toString().trim(), "U+31-34,U+41-44,U+1F4A9");
 	});
 
 	it( "outputs json per font-family", function () {
@@ -98,7 +112,6 @@ describe( "CLI (urls)", function() {
 describe( "CLI (whitelist)", function() {
 	it( "--whitelist without other arguments (outputs range)", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js --whitelist=ABCD`, {
 			cwd: path.resolve(__dirname, "..")
 		});
@@ -108,7 +121,6 @@ describe( "CLI (whitelist)", function() {
 
 	it( "--whitelist --string (outputs string)", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js --whitelist=ABCD --string`, {
 			cwd: path.resolve(__dirname, "..")
 		});
@@ -118,7 +130,6 @@ describe( "CLI (whitelist)", function() {
 
 	it( "--US_ASCII (outputs code points)", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js --US_ASCII`, {
 			cwd: path.resolve(__dirname, "..")
 		});
@@ -128,7 +139,6 @@ describe( "CLI (whitelist)", function() {
 
 	it( "--whitelist --US_ASCII (outputs code points)", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js --whitelist=ABCD --US_ASCII`, {
 			cwd: path.resolve(__dirname, "..")
 		});
@@ -138,7 +148,6 @@ describe( "CLI (whitelist)", function() {
 
 	it( "--whitelist='Unicode Range' --US_ASCII (outputs code points)", function () {
 		this.timeout( 10000 );
-		// console.log( "__dirname:", __dirname );
 		let output = childProcess.execSync(`node cmd.js --whitelist="U+09" --US_ASCII`, {
 			cwd: path.resolve(__dirname, "..")
 		});
@@ -163,16 +172,16 @@ describe( "CLI (subset)", function() {
 		this.timeout( 10000 );
 
 		var fontPath = "test/fonts/sourcesanspro-regular.ttf";
-		console.log( "__dirname:", __dirname );
+		// console.log( "__dirname:", __dirname );
 
 		let output = childProcess.execSync(`node cmd.js --whitelist=ABC --subset=${fontPath} --formats=ttf`, {
 			cwd: path.resolve(__dirname, "..")
 		});
 
-		console.log( "childProcess output: ", output.toString() );
+		// console.log( "childProcess output: ", output.toString() );
 
 		var subsetPath = fontPath.split( ".ttf" ).join( "-subset.ttf" );
-		console.log("old fontPath: ", fontPath, " new fontpath: ", subsetPath);
+		// console.log("old fontPath: ", fontPath, " new fontpath: ", subsetPath);
 
 		var subset = fs.existsSync( subsetPath );
 		assert.ok( subset );
