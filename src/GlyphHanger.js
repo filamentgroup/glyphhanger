@@ -1,16 +1,11 @@
 const chalk = require( "chalk" );
 const path = require( "path" );
-const { URL } = require("url");
 const puppeteer = require('puppeteer');
-const connect = require("connect");
-const serveStatic = require("serve-static");
 const CharacterSet = require( "characterset" );
+const WebServer = require( "./WebServer" );
 const GlyphHangerWhitelist = require( "./GlyphHangerWhitelist" );
 const debug = require("debug")("glyphhanger");
 const debugNodes = require("debug")("glyphhanger:nodes");
-
-const SITE_PATH = path.resolve(__dirname, "..");
-const SERVER_PORT = 8091;
 
 class GlyphHanger {
 	constructor() {
@@ -19,15 +14,6 @@ class GlyphHanger {
 		};
 
 		this.whitelist = new GlyphHangerWhitelist();
-	}
-
-	getStaticServer() {
-		return new Promise(function(resolve, reject) {
-			let server = connect().use(serveStatic(SITE_PATH)).listen(SERVER_PORT, function() {
-				debug(`Web server started on ${SERVER_PORT} for ${SITE_PATH}.`);
-				resolve(server);
-			});
-		});
 	}
 
 	async getBrowser() {
@@ -93,24 +79,10 @@ class GlyphHanger {
 	}
 
 	async _getPage(url) {
-		let urlObj;
-		try {
-			urlObj = new URL(url);
-		} catch(e) {
-			if( !this.staticServer ) {
-				this.staticServer = await this.getStaticServer();
-			}
-
-			urlObj = new URL(url, "http://localhost:" + SERVER_PORT + "/");
-			debug("Transforming %o to new URL %o", url, urlObj.toString());
-		}
-
 		let browser = await this.getBrowser();
 		let page = await browser.newPage();
 
-		debug("Navigating to %o", urlObj.toString());
-
-		await page.goto(urlObj.toString(), {
+		await page.goto(url, {
 			waitUntil: ["load", "networkidle0"]
 		});
 
@@ -150,21 +122,30 @@ class GlyphHanger {
 			return hanger.toJSON();
 		}, this.className);
 
+		debug("Adding to set for %o: %o", url, json);
 		this.addToSets(json);
 	}
 
 	async fetchUrls( urls ) {
 		for( let url of urls ) {
-			await this._fetchUrl(url);
+			debug("WebServer.isValidUrl(%o)", url);
+
+			if(!WebServer.isValidUrl(url) || url.indexOf('http://localhost:') === 0 ) {
+				if( !this.staticServer ) {
+					debug("Creating static server");
+					this.staticServer = await WebServer.getStaticServer();
+				}
+			}
+
+			let urlStr = WebServer.getUrl(url);
+			await this._fetchUrl(urlStr);
 		}
 
 		let browser = await this.getBrowser();
 		await browser.close();
 
-		if( this.staticServer ) {
-			let server = await this.staticServer;
-			server.close();
-		}
+		debug("maybe closing static server");
+		WebServer.close(this.staticServer);
 	}
 
 	getOutputForSet(set) {

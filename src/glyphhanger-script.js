@@ -69,7 +69,7 @@
 
 		if( node.parentNode ) {
 			var textTransform = this.win.getComputedStyle( node.parentNode ).getPropertyValue( "text-transform" );
-			console.log( "textTransform:", textTransform );
+			// console.log( "textTransform:", textTransform );
 			switch (textTransform) {
 				case "uppercase":
 					return value.toUpperCase();
@@ -82,15 +82,15 @@
 			}
 		}
 
-		console.log( "returning nodeValue", value );
+		// console.log( "returning nodeValue", value );
 
 		return value;
 	};
 
 	GH.prototype.getNodeValue = function( node ) {
 		var innerText = this.fakeInnerText( node );
-		console.log( "innerText:", node.innerText );
-		console.log( "fakeInnerText:", innerText );
+		// console.log( "innerText:", node.innerText );
+		// console.log( "fakeInnerText:", innerText );
 		return node.innerText || innerText || "";
 	};
 

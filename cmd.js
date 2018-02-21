@@ -5,6 +5,7 @@ var GlyphHangerFormat = require( "./src/GlyphHangerFormat" );
 var GlyphHangerWhitelist = require( "./src/GlyphHangerWhitelist" );
 var GlyphHangerSubset = require( "./src/GlyphHangerSubset" );
 var MultipleSpiderPigs = require( "./src/MultipleUrlSpiderPig" );
+const debug = require( "debug" )( "glyphhanger:cli" );
 
 var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, argv.US_ASCII );
 
@@ -67,6 +68,7 @@ if( argv.version ) {
 
 			let urls = sp.getUrlsWithLimit();
 			await sp.finish();
+			debug( "Urls (after limit): %o", urls );
 
 			await gh.fetchUrls( urls );
 		} else {

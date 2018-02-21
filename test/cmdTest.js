@@ -17,7 +17,7 @@ var path = require( "path" );
 // glyphhanger --subset=*.ttf --US_ASCII										(reduce to US_ASCII characters)
 // glyphhanger --subset=*.ttf --US_ASCII --whitelist=ABCD		(reduce to US_ASCII union with whitelist)
 
-describe( "glyphhanger cli", function() {
+describe( "CLI", function() {
 	it( "outputs version", function () {
 		this.timeout( 10000 );
 		// console.log( "__dirname:", __dirname );
@@ -67,6 +67,16 @@ describe( "glyphhanger cli", function() {
 		});
 
 		assert.equal( output.toString().trim(), "U+61-66" );
+	});
+
+	it( "can use spider", function () {
+		this.timeout( 10000 );
+		// console.log( "__dirname:", __dirname );
+		let output = childProcess.execSync(`node cmd.js test/urls/root.html --spider`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "U+41-47" );
 	});
 
 	it( "Produced a file", function () {

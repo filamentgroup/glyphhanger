@@ -1,10 +1,13 @@
+const WebServer = require("./WebServer");
 const SpiderPig = require("@zachleat/spider-pig");
+const debug = require("debug")("glyphhanger:spiderpig");
 
 class MultipleSpiderPig {
 	constructor() {
 		this.limit = 10;
 		this.urls = [];
 		this.isVerbose = false;
+		debug("initializing MultipleSpiderPig");
 	}
 
 	async getPiggy() {
@@ -39,8 +42,21 @@ class MultipleSpiderPig {
 		let piggy = await this.getPiggy();
 
 		for( let url of urls ) {
+			if(!WebServer.isValidUrl(url)) {
+				if( !this.staticServer ) {
+					debug("Creating static server");
+					this.staticServer = await WebServer.getStaticServer();
+				}
+			}
+			url = WebServer.getUrl(url);
+
+			debug("fetching %o", url);
+			this.addUrls([url]);
 			this.addUrls(await piggy.fetchLocalUrls(url));
 		}
+
+		debug("maybe closing static server");
+		WebServer.close(this.staticServer);
 	}
 
 	getUrlsWithLimit() {
@@ -61,6 +77,7 @@ class MultipleSpiderPig {
 
 	async finish() {
 		if( this.piggy ) {
+			debug("finishing");
 			await this.piggy.finish();
 		}
 	}
