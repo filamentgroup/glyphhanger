@@ -4,20 +4,7 @@ var childProcess = require( "child_process" );
 var fs = require( "fs" );
 var path = require( "path" );
 
-// glyphhanger http://localhost/ http://localhost2/					(multiple urls are welcome)
-// glyphhanger http://localhost/ --spider 									(limit default 10)
-// glyphhanger http://localhost/ --spider-limit							(limit default 10)
-// glyphhanger http://localhost/ --spider-limit=0 					(no limit)
-// glyphhanger http://localhost/ --spider-limit=1						(limit 1)
-// glyphhanger --whitelist=ABCD															(convert characters to unicode range)
-// glyphhanger --US_ASCII																		(convert characters to unicode range)
-// glyphhanger --US_ASCII --whitelist=ABCD									(convert characters to unicode range)
-// glyphhanger --subset=*.ttf																(file format conversion)
-// glyphhanger --subset=*.ttf --whitelist=ABCD							(reduce to whitelist characters)
-// glyphhanger --subset=*.ttf --US_ASCII										(reduce to US_ASCII characters)
-// glyphhanger --subset=*.ttf --US_ASCII --whitelist=ABCD		(reduce to US_ASCII union with whitelist)
-
-describe( "CLI", function() {
+describe( "CLI (version, help)", function() {
 	it( "outputs version", function () {
 		this.timeout( 10000 );
 		// console.log( "__dirname:", __dirname );
@@ -48,7 +35,9 @@ describe( "CLI", function() {
 
 		assert.ok( output.toString().indexOf("usage: glyphhanger") > -1 );
 	});
+});
 
+describe( "CLI (urls)", function() {
 	it( "can use a single url", function () {
 		this.timeout( 10000 );
 
@@ -79,6 +68,92 @@ describe( "CLI", function() {
 		assert.equal( output.toString().trim(), "U+41-47" );
 	});
 
+	it( "can use spider with limit", function () {
+		this.timeout( 10000 );
+		// console.log( "__dirname:", __dirname );
+		let output = childProcess.execSync(`node cmd.js test/urls/root.html --spider-limit=2`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "U+41-44" );
+	});
+
+	it( "outputs json per font-family", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/json/families.html --json`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		let json = JSON.parse(output.toString().trim());
+		assert.deepEqual( json, {
+			"*": "U+61-69",
+			"Times New Roman": "U+61-63",
+			"monospace": "U+64-66",
+			"A Web Font": "U+67-69"
+		});
+	});
+});
+
+describe( "CLI (whitelist)", function() {
+	it( "--whitelist without other arguments (outputs range)", function () {
+		this.timeout( 10000 );
+		// console.log( "__dirname:", __dirname );
+		let output = childProcess.execSync(`node cmd.js --whitelist=ABCD`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "U+41-44" );
+	});
+
+	it( "--whitelist --string (outputs string)", function () {
+		this.timeout( 10000 );
+		// console.log( "__dirname:", __dirname );
+		let output = childProcess.execSync(`node cmd.js --whitelist=ABCD --string`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "ABCD" );
+	});
+
+	it( "--US_ASCII (outputs code points)", function () {
+		this.timeout( 10000 );
+		// console.log( "__dirname:", __dirname );
+		let output = childProcess.execSync(`node cmd.js --US_ASCII`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "U+20-7E" );
+	});
+
+	it( "--whitelist --US_ASCII (outputs code points)", function () {
+		this.timeout( 10000 );
+		// console.log( "__dirname:", __dirname );
+		let output = childProcess.execSync(`node cmd.js --whitelist=ABCD --US_ASCII`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "U+20-7E" );
+	});
+
+	it( "--whitelist='Unicode Range' --US_ASCII (outputs code points)", function () {
+		this.timeout( 10000 );
+		// console.log( "__dirname:", __dirname );
+		let output = childProcess.execSync(`node cmd.js --whitelist="U+09" --US_ASCII`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "U+9,U+20-7E" );
+	});
+});
+
+// TODO
+// glyphhanger --subset=*.ttf																(file format conversion)
+// glyphhanger --subset=*.ttf --whitelist=ABCD							(reduce to whitelist characters)
+// glyphhanger --subset=*.ttf --US_ASCII										(reduce to US_ASCII characters)
+// glyphhanger --subset=*.ttf --US_ASCII --whitelist=ABCD		(reduce to US_ASCII union with whitelist)
+
+describe( "CLI (subset)", function() {
 	it( "Produced a file", function () {
 		this.timeout( 10000 );
 
