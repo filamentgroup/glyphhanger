@@ -1,6 +1,5 @@
 const assert = require( "assert" );
 const path = require( "path" );
-const phantomjs = require( "phantomjs-prebuilt" );
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const window = (new JSDOM(`<!doctype html><html><body></body></html>`)).window;

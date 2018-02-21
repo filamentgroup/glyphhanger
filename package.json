@@ -34,7 +34,6 @@
     "glob": "^7.1.2",
     "minimist": "^1.2.0",
     "parse-filepath": "^1.0.2",
-    "phantomjs-prebuilt": "^2.1.16",
     "rsvp": "^4.7.0",
     "serve-static": "^1.13.2",
     "shelljs": "^0.7.8"
