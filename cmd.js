@@ -1,22 +1,25 @@
 #!/usr/bin/env node
 var argv = require( "minimist" )( process.argv.slice(2) );
+var GlyphHanger = require( "./src/GlyphHanger" );
 var GlyphHangerFormat = require( "./src/GlyphHangerFormat" );
 var GlyphHangerWhitelist = require( "./src/GlyphHangerWhitelist" );
-var PhantomGlyphHanger = require( "./src/PhantomGlyphHanger" );
-var PhantomGlyphHangerSpider = require( "./src/PhantomGlyphHangerSpider" );
 var GlyphHangerSubset = require( "./src/GlyphHangerSubset" );
+var MultipleSpiderPigs = require( "./src/MultipleUrlSpiderPig" );
+const debug = require( "debug" )( "glyphhanger:cli" );
 
 var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, argv.US_ASCII );
 
-var pgh = new PhantomGlyphHanger();
-pgh.setVerbose( argv.verbose );
+var gh = new GlyphHanger();
+gh.setVerbose( argv.verbose );
 if( argv.unicodes ) {
 	console.log( '--unicodes was made default in v2.0. To output characters instead of code points, use --string' );
 	require( "shelljs" ).exit(1);
 }
-pgh.setUnicodesOutput( argv.string );
-pgh.setWhitelist( whitelist );
-pgh.setSubset( argv.subset );
+gh.setUnicodesOutput( argv.string );
+gh.setWhitelist( whitelist );
+gh.setSubset( argv.subset );
+gh.setJson( argv.json );
+gh.setClassName( argv.classname );
 
 var subset = new GlyphHangerSubset();
 if( argv.formats ) {
@@ -27,7 +30,7 @@ if( argv.subset ) {
 	subset.setFontFilesGlob( argv.subset );
 
 	// using URLs
-	pgh.setFetchUrlsCallback(function( unicodes ) {
+	gh.setFetchUrlsCallback(function( unicodes ) {
 		subset.subsetAll( unicodes );
 	});
 }
@@ -36,6 +39,7 @@ if( argv.subset ) {
 // glyphhanger --help
 // glyphhanger
 // glyphhanger http://localhost/
+// glyphhanger http://localhost/ http://localhost2/					(multiple urls are welcome)
 // glyphhanger http://localhost/ --spider 									(limit default 10)
 // glyphhanger http://localhost/ --spider-limit							(limit default 10)
 // glyphhanger http://localhost/ --spider-limit=0 					(no limit)
@@ -52,32 +56,35 @@ if( argv.version ) {
 	var pkg = require( "./package.json" );
 	console.log( pkg.version );
 } else if( argv.help ) {
-	pgh.outputHelp();
+	gh.outputHelp();
 } else if( argv._ && argv._.length ) {
-	if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
-		var spider = new PhantomGlyphHangerSpider();
-		spider.setLimit( argv[ 'spider-limit' ] );
+	(async function() {
+		// Spider
+		if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
+			let sp = new MultipleSpiderPigs();
+			sp.setVerbose( argv.verbose );
+			sp.setLimit(argv[ 'spider-limit' ]);
+			await sp.fetchUrls(argv._);
 
-		spider.findUrls( argv._, function( urls ) {
-			if( argv.verbose ) {
-				urls.forEach(function( url, index ) {
-					console.log( "glyphhanger-spider found (" + ( index + 1 ) + "): " + url );
-				});
-			}
+			let urls = sp.getUrlsWithLimit();
+			await sp.finish();
+			debug( "Urls (after limit): %o", urls );
 
-			pgh.fetchUrls( urls );
-		});
-	} else {
-		pgh.fetchUrls( argv._ );
-	}
+			await gh.fetchUrls( urls );
+		} else {
+			await gh.fetchUrls( argv._ );
+		}
+
+		gh.complete();
+	})();
 } else { // not using URLs
 	if( argv.subset ) {
 		// --subset with or without --whitelist
 		subset.subsetAll( !whitelist.isEmpty() ? whitelist.getWhitelistAsUnicodes() : whitelist.getUniversalRangeAsUnicodes() );
 	} else if( !whitelist.isEmpty() ) {
 		// not subsetting, just output the code points (can convert whitelist string to code points)
-		pgh.output();
+		gh.outputUnicodes();
 	} else {
-		pgh.outputHelp();
+		gh.outputHelp();
 	}
 }

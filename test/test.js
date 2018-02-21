@@ -1,25 +1,23 @@
 const assert = require( "assert" );
 const path = require( "path" );
-const phantomjs = require( "phantomjs-prebuilt" );
-const childProcess = require( "child_process" );
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const window = (new JSDOM(`<!doctype html><html><body></body></html>`)).window;
 const document = window.document;
 
-const GlyphHanger = require( "../glyphhanger.js" );
+const GlyphHangerScript = require( "../src/glyphhanger-script.js" );
 
 describe( "glyphhanger", function() {
 	describe( "Simple node", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "abc";
 
-		var gh = new GlyphHanger();
-		gh.setEnv(window);
-		gh.init( div );
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
 		it( "should match", function() {
-			assert.equal( gh.toString(), "abc" );
+			assert.equal( ghs.toString(), "abc" );
 		});
 	});
 
@@ -27,12 +25,12 @@ describe( "glyphhanger", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "<div>bcd</div>";
 
-		var gh = new GlyphHanger();
-		gh.setEnv(window);
-		gh.init( div );
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
 		it( "should match", function() {
-			assert.equal( gh.toString(), "bcd" );
+			assert.equal( ghs.toString(), "bcd" );
 		});
 	});
 
@@ -40,12 +38,12 @@ describe( "glyphhanger", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "<div style='text-transform: uppercase'>bcd</div>";
 
-		var gh = new GlyphHanger();
-		gh.setEnv(window);
-		gh.init( div );
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
 		it( "should match", function() {
-			assert.equal( gh.toString(), "BCD" );
+			assert.equal( ghs.toString(), "BCD" );
 		});
 	});
 
@@ -53,12 +51,12 @@ describe( "glyphhanger", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "<div><span style='text-transform: uppercase'>b</span>cd</div>";
 
-		var gh = new GlyphHanger();
-		gh.setEnv(window);
-		gh.init( div );
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
 		it( "should match", function() {
-			assert.equal( gh.toString(), "Bcd" );
+			assert.equal( ghs.toString(), "Bcd" );
 		});
 	});
 
@@ -66,12 +64,12 @@ describe( "glyphhanger", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "<div style='text-transform: lowercase'>BCD</div>";
 
-		var gh = new GlyphHanger();
-		gh.setEnv(window);
-		gh.init( div );
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
 		it( "should match", function() {
-			assert.equal( gh.toString(), "bcd" );
+			assert.equal( ghs.toString(), "bcd" );
 		});
 	});
 
@@ -79,13 +77,13 @@ describe( "glyphhanger", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "<div style='text-transform: capitalize'>test</div>";
 
-		var gh = new GlyphHanger();
-		gh.setEnv(window);
-		gh.init( div );
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
 		it( "should match", function() {
 			// TESTtest => unique and sorted becomes ESTest
-			assert.equal( gh.toString(), "ESTest" );
+			assert.equal( ghs.toString(), "ESTest" );
 		});
 	});
 
@@ -94,12 +92,12 @@ describe( "glyphhanger", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "<div>bcd</div><div><span>e</span>fg</div>0123456789";
 
-		var gh = new GlyphHanger();
-		gh.setEnv(window);
-		gh.init( div );
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
 		it( "should match", function() {
-			assert.equal( gh.toString(), "0123456789bcdefg" );
+			assert.equal( ghs.toString(), "0123456789bcdefg" );
 		});
 	});
 
@@ -107,13 +105,13 @@ describe( "glyphhanger", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "bcd";
 
-		var gh = new GlyphHanger();
-		gh.setEnv(window);
-		gh.saveGlyphs( "efgh")
-		gh.init( div );
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.saveGlyphs( "efgh")
+		ghs.init( div );
 
 		it( "should match", function() {
-			assert.equal( gh.toString(), "bcdefgh" );
+			assert.equal( ghs.toString(), "bcdefgh" );
 		});
 	});
 
@@ -121,12 +119,12 @@ describe( "glyphhanger", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "😎";
 
-		var gh = new GlyphHanger();
-		gh.setEnv(window);
-		gh.init( div );
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
 		it( "has a surrogate pair", function() {
-			assert.equal( gh.toString(), "\\uD83D\\uDE0E" );
+			assert.equal( ghs.toString(), "\\uD83D\\uDE0E" );
 		});
 	});
 
@@ -134,67 +132,94 @@ describe( "glyphhanger", function() {
 		var div = document.createElement( "div" );
 		div.innerHTML = "😎💩";
 
-		var gh = new GlyphHanger();
-		gh.setEnv(window);
-		gh.init( div );
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
 		it( "has two surrogate pairs", function() {
-			assert.equal( gh.toString(), "\\uD83D\\uDCA9\\uD83D\\uDE0E" );
+			assert.equal( ghs.toString(), "\\uD83D\\uDCA9\\uD83D\\uDE0E" );
 		});
 	});
 
-	describe( "Integration test", function() {
-		var args = [ path.join( __dirname, "..", "phantomjs-glyphhanger.js" ), false, false, "", path.join( __dirname, "test.html" ) ];
+	describe( "font-family Sets, monospace", function() {
+		var div = document.createElement( "div" );
+		div.innerHTML = "<div style='font-family: monospace'>bcd</div>efg";
 
-		it( "should have 3 distinct glyphs", function( done ) {
-			this.timeout( 30000 );
-			childProcess.execFile( phantomjs.path, args, function( error, stdout, stderr ) {
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
-				assert.equal( stdout.trim(), "abc" );
-				done();
-			});
-		})
+		it( "should match", function() {
+			assert.equal( ghs.getFamilySet("monospace").toString(), "bcd" );
+			assert.equal( ghs.getFamilySet("serif").toString(), "efg" );
+			assert.equal( ghs.toString(), "bcdefg" );
+		});
 	});
 
-	describe( "Integration test: text-transform uppercase", function() {
-		var args = [ path.join( __dirname, "..", "phantomjs-glyphhanger.js" ), false, false, "", path.join( __dirname, "uppercase.html" ) ];
+	describe( "font-family Sets, monospace and sans-serif", function() {
+		var div = document.createElement( "div" );
+		div.innerHTML = "<div style='font-family: monospace'>bcd</div>efg<div style='font-family: sans-serif'>ghi</div>";
 
-		it( "should have uppercase words", function( done ) {
-			this.timeout( 30000 );
-			childProcess.execFile( phantomjs.path, args, function( error, stdout, stderr ) {
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
-				// abc ^word => abcWORD => DORWabc
-				assert.equal( stdout.trim(), "DORWabc" );
-				done();
-			});
-		})
+		it( "should match", function() {
+			assert.equal( ghs.getFamilySet("monospace").toString(), "bcd" );
+			assert.equal( ghs.getFamilySet("sans-serif").toString(), "ghi" );
+			assert.equal( ghs.getFamilySet("serif").toString(), "efg" );
+			assert.equal( ghs.toString(), "bcdefghi" );
+		});
 	});
 
-	describe( "Integration test: text-transform capitalize", function() {
-		var args = [ path.join( __dirname, "..", "phantomjs-glyphhanger.js" ), false, false, "", path.join( __dirname, "capitalize.html" ) ];
+	describe( "font-family Sets, monospace JSON", function() {
+		var div = document.createElement( "div" );
+		div.innerHTML = "<div style='font-family: monospace'>bcd</div>efg";
 
-		it( "should have capitalized words", function( done ) {
-			this.timeout( 30000 );
-			childProcess.execFile( phantomjs.path, args, function( error, stdout, stderr ) {
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
 
-				// abc ^word => abcWORDword => DORWabcdorw
-				assert.equal( stdout.trim(), "DORWabcdorw" );
-				done();
-			});
-		})
+		it( "should match", function() {
+			assert.deepEqual( ghs.toJSON(), {"monospace":[98,99,100],"serif":[101,102,103],"*":[98,99,100,101,102,103]} );
+		});
 	});
 
-	describe( "Integration test: onload and DOMContentLoaded content", function() {
-		var args = [ path.join( __dirname, "..", "phantomjs-glyphhanger.js" ), false, false, "", path.join( __dirname, "test-onload-content.html" ) ];
+	describe( "getFontFamilyName", function() {
+		var div = document.createElement( "div" );
+		div.innerHTML = "<div style='font-family: Lato, monospace'>bcd</div>efg";
 
-		it( "should have 9 distinct glyphs", function( done ) {
-			this.timeout( 30000 );
-			childProcess.execFile( phantomjs.path, args, function( error, stdout, stderr ) {
+		var ghs = new GlyphHangerScript();
 
-				assert.equal( stdout.trim(), "abcdefghi" );
-				done();
-			});
-		})
+		it( "should fetch a single name", function() {
+			assert.deepEqual( ghs.getFontFamilyName("serif"), "serif" );
+			assert.deepEqual( ghs.getFontFamilyName("Lato"), "Lato" );
+		});
+
+		it( "should fetch the first family name in a list", function() {
+			assert.deepEqual( ghs.getFontFamilyName("Lato, serif"), "Lato" );
+		});
+
+		it( "should fetch a family name without quotes", function() {
+			assert.deepEqual( ghs.getFontFamilyName("'Lato'"), "Lato" );
+		});
+
+		it( "should fetch the first family name without quotes in a list", function() {
+			assert.deepEqual( ghs.getFontFamilyName("'Lato', serif"), "Lato" );
+		});
+	});
+
+	describe( "Get font-family name from list", function() {
+		var div = document.createElement( "div" );
+		div.innerHTML = "<div style='font-family: Lato, monospace'>bcd</div>efg";
+
+		var ghs = new GlyphHangerScript();
+		ghs.setEnv(window);
+		ghs.init( div );
+
+		it( "should match", function() {
+			assert.deepEqual( ghs.toJSON(), {"Lato":[98,99,100],"serif":[101,102,103],"*":[98,99,100,101,102,103]} );
+		});
 	});
 });
 
