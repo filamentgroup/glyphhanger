@@ -1,4 +1,3 @@
-const FontStats = require("font-stats");
 const parsePath = require("parse-filepath");
 
 class GlyphHangerFontFace {
@@ -50,11 +49,6 @@ class GlyphHangerFontFace {
 		let family = this.family;
 		let content = [];
 
-		// fallback to font-family stored in font file
-		if(ttfPath && !this.family) {
-			let stats = new FontStats(ttfPath);
-			family = stats.stats.metadata.fontFamily.en;
-		}
 		if(family) {
 			content.push(`  font-family: ${family};`);
 		}

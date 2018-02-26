@@ -108,9 +108,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 #### Output a @font-face block with `--css`
 
-Because we’re not parsing URLs for glyphs, we can optionally use `--family='My Family Name'` to override the name used in the `@font-face` block. Normally `--family` would tell GlyphHanger to only parse text data from nodes using one of the fonts listed in `--family`.
-
-If we don’t use `--family` in this way, we’ll parse the file to find the `font-family` name stored inside of the font file.
+Because we’re not parsing URLs for glyphs, we can optionally use `--family='My Family Name'` to set the name used in the `@font-face` block. Normally `--family` would tell GlyphHanger to only parse text data from nodes using one of the fonts listed in `--family`.
 
 ```
 > glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=*.ttf --css
