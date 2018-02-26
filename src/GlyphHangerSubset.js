@@ -13,6 +13,16 @@ class GlyphHangerSubset {
 		this.formats = new GlyphHangerFormat();
 	}
 
+	setOutputDirectory( outputDir ) {
+		if( outputDir ) {
+			this.outputDirectory = outputDir;
+		}
+	}
+
+	getOutputDirectory() {
+		return this.outputDirectory;
+	}
+
 	setFontFilesGlob( ttfFilesGlob ) {
 		this.fontPaths = glob.sync( ttfFilesGlob );
 	}
@@ -97,7 +107,8 @@ class GlyphHangerSubset {
 
 	subset( inputFile, unicodes, format, useZopfli ) {
 		var outputFilename = this.getFilenameFromTTFPath( inputFile, format, useZopfli );
-		var outputFullPath = path.join( parsePath( inputFile ).dir, outputFilename );
+		var outputDir = this.outputDirectory || parsePath( inputFile ).dir;
+		var outputFullPath = path.join( outputDir, outputFilename );
 		var cmd = [ "pyftsubset" ];
 		cmd.push( inputFile );
 		cmd.push( "--output-file=" + outputFullPath );

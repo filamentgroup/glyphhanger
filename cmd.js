@@ -24,6 +24,7 @@ gh.setFamilies( argv.family );
 gh.setTimeout( argv.timeout );
 
 var subset = new GlyphHangerSubset();
+subset.setOutputDirectory(argv.output);
 
 if( argv.formats ) {
 	subset.setFormats( argv.formats );
@@ -61,6 +62,7 @@ if( argv.subset ) {
 // glyphhanger --family='My Serif' -css											(outputs results for specific family with a font-face block)
 // glyphhanger --subset=*.ttf --family='My Serif'						(subset group of fonts to results for specific family)
 // glyphhanger --subset=*.ttf --family='My Serif' -css			(subset group of fonts to results for specific family and a font-face block)
+// glyphhanger --subset=*.ttf --output=dist/								(change the output directory for subset files)
 
 if( argv.version ) {
 	var pkg = require( "./package.json" );
@@ -87,6 +89,13 @@ if( argv.version ) {
 		gh.output();
 
 		try {
+			fontface.setUnicodeRange( gh.getUnicodeRange() );
+			fontface.writeCSSFiles();
+		} catch(e) {
+			console.log("GlyphHangerFontFace Error: ", e);
+		}
+
+		try {
 			if( argv.subset ) {
 				subset.subsetAll( gh.getUnicodeRange() );
 			}
@@ -95,7 +104,6 @@ if( argv.version ) {
 		}
 
 		try {
-			fontface.setUnicodeRange( gh.getUnicodeRange() );
 			fontface.output();
 		} catch(e) {
 			console.log("GlyphHangerFontFace Error: ", e);
