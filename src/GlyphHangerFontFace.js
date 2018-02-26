@@ -56,7 +56,9 @@ class GlyphHangerFontFace {
 			content.push(`  src: ${this.getSrcDescriptor(ttfPath, parsePath(ttfPath).dir)};`);
 		}
 
-		content.push(`  unicode-range: ${this.unicodeRange};`);
+		if( this.unicodeRange.trim() ) {
+			content.push(`  unicode-range: ${this.unicodeRange};`);
+		}
 
 		return `
 @font-face {

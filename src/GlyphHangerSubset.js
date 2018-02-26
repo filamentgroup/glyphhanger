@@ -6,6 +6,7 @@ const path = require( "path" );
 const chalk = require( "chalk" );
 const glob = require( "glob" );
 const GlyphHangerFormat = require("./GlyphHangerFormat");
+const debug = require("debug")("glyphhanger:subset");
 
 class GlyphHangerSubset {
 	constructor() {
@@ -117,11 +118,16 @@ class GlyphHangerSubset {
 			shell.exit(1);
 		}
 
+		debug("command: %o", cmd.join( " " ));
+
 		if( shell.exec( cmd.join( " " ) ).code !== 0 ) {
 			shell.echo( "Error: pyftsubset command failed (" + cmd.join( " " ) + ")." );
 			shell.exit(1);
 		}
 
+		if( !unicodes ) {
+			console.log( chalk.yellow( "Warning: the unicode range for " + outputFilename + " was empty! Is your --family wrong? Was your URL empty?" ) );
+		}
 		var inputStat = fs.statSync( inputFile );
 		var outputStat = fs.statSync( outputFullPath );
 		console.log( "Subsetting", inputFile, "to", outputFilename, "(was " + chalk.red( filesize( inputStat.size ) ) + ", now " + chalk.green( filesize( outputStat.size ) ) + ")" );
