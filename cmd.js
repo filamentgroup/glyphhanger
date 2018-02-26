@@ -84,8 +84,12 @@ if( argv.version ) {
 
 		gh.output();
 
-		if( argv.subset ) {
-			subset.subsetAll( gh.getUnicodeRange() );
+		try {
+			if( argv.subset ) {
+				subset.subsetAll( gh.getUnicodeRange() );
+			}
+		} catch(e) {
+			console.log("GlyphHangerSubset Error: ", e);
 		}
 
 		try {
@@ -99,19 +103,31 @@ if( argv.version ) {
 	if( argv.subset ) {
 		gh.output();
 
-		// --subset with or without --whitelist
-		subset.subsetAll( !whitelist.isEmpty() ? whitelist.getWhitelistAsUnicodes() : whitelist.getUniversalRangeAsUnicodes() );
-
-		if(!whitelist.isEmpty()) {
-			fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
+		try {
+			// --subset with or without --whitelist
+			subset.subsetAll( !whitelist.isEmpty() ? whitelist.getWhitelistAsUnicodes() : whitelist.getUniversalRangeAsUnicodes() );
+		} catch(e) {
+			console.log("GlyphHangerSubset Error: ", e);
 		}
-		fontface.output();
+
+		try {
+			if(!whitelist.isEmpty()) {
+				fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
+			}
+			fontface.output();
+		} catch(e) {
+			console.log("GlyphHangerFontFace Error: ", e);
+		}
 	} else if( !whitelist.isEmpty() ) {
 		// not subsetting, just output the code points (can convert whitelist string to code points)
 		gh.outputUnicodes();
 
-		fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
-		fontface.output();
+		try {
+			fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
+			fontface.output();
+		} catch(e) {
+			console.log("GlyphHangerFontFace Error: ", e);
+		}
 	} else {
 		gh.outputHelp();
 	}
