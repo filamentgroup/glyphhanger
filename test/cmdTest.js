@@ -192,6 +192,55 @@ describe( "CLI (whitelist)", function() {
 	});
 });
 
+describe( "CLI (css)", function() {
+	it( "--css --whitelist='Unicode Range'", function () {
+		this.timeout( 10000 );
+		let output = childProcess.execSync(`node cmd.js --whitelist="U+09" --css`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.ok( output.toString().indexOf(`@font-face {
+  unicode-range: U+9;
+}`) > - 1);
+	});
+
+	it( "--css --whitelist='String'", function () {
+		this.timeout( 10000 );
+		let output = childProcess.execSync(`node cmd.js --whitelist="abcd" --css`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.ok( output.toString().indexOf(`@font-face {
+  unicode-range: U+61-64;
+}`) > - 1);
+	});
+
+	it( "single url --css", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/multiple/one.html --css`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.ok( output.toString().indexOf(`@font-face {
+  unicode-range: U+61-63;
+}`) > - 1);
+	});
+
+	it( "two font-families --css", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/json/families.html --family='A Web Font, monospace' --css`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.ok( output.toString().indexOf(`@font-face {
+  font-family: A Web Font;
+  unicode-range: U+64-69;
+}`) > - 1);
+	});
+});
+
 // 
 // TODO glyphhanger --subset=*.ttf																(file format conversion)
 // DONE glyphhanger --subset=*.ttf --whitelist=ABCD								(reduce to whitelist characters)

@@ -6,27 +6,10 @@ const path = require( "path" );
 const chalk = require( "chalk" );
 const glob = require( "glob" );
 const GlyphHangerFormat = require("./GlyphHangerFormat");
-const FontFaceOutput = require("./FontFaceOutput");
 
 class GlyphHangerSubset {
 	constructor() {
 		this.formats = new GlyphHangerFormat();
-		this.cssOutput = false;
-	}
-
-	setCSSOutput( cssOutput ) {
-		this.cssOutput = !!cssOutput;
-	}
-
-	setFamilies( families ) {
-		if( families && typeof families === "string" ) {
-			let split = families.split(",").map(family => family.trim());
-			if( split.length ) {
-				this.family = split[0];
-			}
-		}
-
-		this.families = families;
 	}
 
 	setFontFilesGlob( ttfFilesGlob ) {
@@ -43,20 +26,6 @@ class GlyphHangerSubset {
 		}
 	}
 
-	getFontFace(ttfPath, dir, unicodeRange) {
-		let content = [];
-		if(this.family) {
-			content.push(`  font-family: ${this.family};`);
-		}
-
-		content.push(`  src: ${this.getSrcDescriptor(ttfPath, dir)};`);
-		content.push(`  unicode-range: ${unicodeRange};`);
-
-		return `@font-face {
-${content.join("\n")}
-}`;
-	}
-
 	getPath( filePath, dir ) {
 		if( dir ) {
 			return path.join(dir, filePath);
@@ -65,20 +34,24 @@ ${content.join("\n")}
 		}
 	}
 
-	getSrcDescriptor( ttfPath, dir ) {
-		var src = [];
+	getPaths() {
+		return this.fontPaths;
+	}
+
+	getSrcsObject( ttfPath, dir ) {
+		var srcs = {};
 		if( this.formats.hasFormat( "woff2" ) ) {
-			src.push(`url(${this.getPath(this.getFilenameFromTTFPath(ttfPath, "woff2"), dir)}) format("woff2")`);
+			srcs.woff2 = this.getPath(this.getFilenameFromTTFPath(ttfPath, "woff2"), dir);
 		}
 		if( this.formats.hasFormat( "woff-zopfli" ) ) {
-			src.push(`url(${this.getPath(this.getFilenameFromTTFPath(ttfPath, "woff", true), dir)}) format("woff")`);
+			srcs.woff = this.getPath(this.getFilenameFromTTFPath(ttfPath, "woff", true), dir);
 		} else if( this.formats.hasFormat( "woff" ) ) {
-			src.push(`url(${this.getPath(this.getFilenameFromTTFPath(ttfPath, "woff"), dir)}) format("woff")`);
+			srcs.woff = this.getPath(this.getFilenameFromTTFPath(ttfPath, "woff"), dir);
 		}
 		if( this.formats.hasFormat( "ttf" ) ) {
-			src.push(`url(${this.getPath(this.getFilenameFromTTFPath(ttfPath), dir)}) format("truetype")`);
+			srcs.truetype = this.getPath(this.getFilenameFromTTFPath(ttfPath), dir);
 		}
-		return src.join(", ");
+		return srcs;
 	}
 
 	getFilenames( ttfPath, dir ) {
@@ -117,12 +90,6 @@ ${content.join("\n")}
 			}
 			if( this.formats.hasFormat( "woff2" ) ) {
 				this.subset( fontPath, unicodes, "woff2" );
-			}
-
-			if( this.cssOutput ) {
-				console.log();
-				console.log(this.getFontFace(fontPath, parsePath(fontPath).dir, unicodes));
-				console.log();
 			}
 		}.bind( this ));
 	}

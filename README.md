@@ -28,7 +28,10 @@ npm install -g glyphhanger
 # multiple URLs, optionally using HTTPS
 > glyphhanger https://google.com https://www.filamentgroup.com
 
-# show results for one or more font-family names
+# show results for each font-family on the page
+> glyphhanger ./test.html --json
+
+# show results only for one or more font-family names
 > glyphhanger ./test.html --family='Open Sans, Roboto'
 
 # Show version
@@ -105,6 +108,10 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 #### Output a @font-face block with `--css`
 
+Because we’re not parsing URLs for glyphs, we can optionally use `--family='My Family Name'` to override the name used in the `@font-face` block. Normally `--family` would tell GlyphHanger to only parse text data from nodes using one of the fonts listed in `--family`.
+
+If we don’t use `--family` in this way, we’ll parse the file to find the `font-family` name stored inside of the font file.
+
 ```
 > glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=*.ttf --css
 
@@ -112,7 +119,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff (was 145.06 KB
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 2.24 KB)
 
 @font-face {
-  font-family: Source Sans;
+  font-family: LatoLatin;
   src: url(sourcesanspro-regular-subset.woff2) format("woff2"), url(sourcesanspro-regular-subset.woff) format("woff");
   unicode-range: U+41-44;
 }

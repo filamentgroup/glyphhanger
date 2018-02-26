@@ -4,6 +4,7 @@ var GlyphHanger = require( "./src/GlyphHanger" );
 var GlyphHangerFormat = require( "./src/GlyphHangerFormat" );
 var GlyphHangerWhitelist = require( "./src/GlyphHangerWhitelist" );
 var GlyphHangerSubset = require( "./src/GlyphHangerSubset" );
+var GlyphHangerFontFace = require( "./src/GlyphHangerFontFace" );
 var MultipleSpiderPigs = require( "./src/MultipleUrlSpiderPig" );
 const debug = require( "debug" )( "glyphhanger:cli" );
 
@@ -22,14 +23,20 @@ gh.setClassName( argv.classname );
 gh.setFamilies( argv.family );
 
 var subset = new GlyphHangerSubset();
-subset.setCSSOutput( argv.css );
-subset.setFamilies( argv.family );
 
 if( argv.formats ) {
 	subset.setFormats( argv.formats );
 }
 if( argv.subset ) {
 	subset.setFontFilesGlob( argv.subset );
+}
+
+var fontface = new GlyphHangerFontFace();
+fontface.setFamilies( argv.family );
+fontface.setCSSOutput( argv.css );
+
+if( argv.subset ) {
+	fontface.setSubset( subset );
 }
 
 // glyphhanger --version
@@ -48,6 +55,10 @@ if( argv.subset ) {
 // glyphhanger --subset=*.ttf --whitelist=ABCD							(reduce to whitelist characters)
 // glyphhanger --subset=*.ttf --US_ASCII										(reduce to US_ASCII characters)
 // glyphhanger --subset=*.ttf --US_ASCII --whitelist=ABCD		(reduce to US_ASCII union with whitelist)
+// glyphhanger --family='My Serif'													(outputs results for specific family)
+// glyphhanger --family='My Serif' -css											(outputs results for specific family with a font-face block)
+// glyphhanger --subset=*.ttf --family='My Serif'						(subset group of fonts to results for specific family)
+// glyphhanger --subset=*.ttf --family='My Serif' -css			(subset group of fonts to results for specific family and a font-face block)
 
 if( argv.version ) {
 	var pkg = require( "./package.json" );
@@ -56,12 +67,6 @@ if( argv.version ) {
 	gh.outputHelp();
 } else if( argv._ && argv._.length ) {
 	(async function() {
-		if( argv.subset ) {
-			gh.onAfterUnicodes(function( unicodes ) {
-				subset.subsetAll( unicodes );
-			});
-		}
-
 		// Spider
 		if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
 			let sp = new MultipleSpiderPigs();
@@ -77,16 +82,38 @@ if( argv.version ) {
 			await gh.fetchUrls( argv._ );
 		}
 
-		gh.complete();
+		gh.output();
+
+		if( argv.subset ) {
+			subset.subsetAll( gh.getUnicodeRange() );
+		}
+
+		try {
+			fontface.setUnicodeRange( gh.getUnicodeRange() );
+			fontface.output();
+		} catch(e) {
+			console.log("GlyphHangerFontFace Error: ", e);
+		}
 	})();
 } else { // not using URLs
 	if( argv.subset ) {
+		gh.output();
+
 		// --subset with or without --whitelist
 		subset.subsetAll( !whitelist.isEmpty() ? whitelist.getWhitelistAsUnicodes() : whitelist.getUniversalRangeAsUnicodes() );
+
+		if(!whitelist.isEmpty()) {
+			fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
+		}
+		fontface.output();
 	} else if( !whitelist.isEmpty() ) {
 		// not subsetting, just output the code points (can convert whitelist string to code points)
 		gh.outputUnicodes();
+
+		fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
+		fontface.output();
 	} else {
 		gh.outputHelp();
 	}
+
 }

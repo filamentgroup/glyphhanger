@@ -32,10 +32,6 @@ class GlyphHanger {
 		this.families = families;
 	}
 
-	onAfterUnicodes( callback ) {
-		this.onAfterUnicodes = callback;
-	}
-
 	setJson( outputJson ) {
 		this.outputJson = !!outputJson;
 	}
@@ -54,6 +50,8 @@ class GlyphHanger {
 
 	setWhitelist( whitelistObj ) {
 		this.whitelist = whitelistObj;
+
+		this.sets["*"] = this.sets["*"].union( this.whitelist.getCharacterSet() );
 	}
 
 	addToSets( results ) {
@@ -67,19 +65,20 @@ class GlyphHanger {
 		}
 	}
 
-	getUniversalSet() {
-		return this.sets['*'];
-	};
-
 	getSets() {
 		return this.sets;
 	}
+
+	getUniversalSet() {
+		return this.sets['*'];
+	};
 
 	getSetForFamilies(families) {
 		if( typeof families === "string" ) {
 			families = families.split(",").map(family => family.trim());
 		}
 
+		// case insensitive map
 		let familyMap = {};
 		for( let familyName of families ) {
 			familyMap[familyName.toLowerCase()] = true;
@@ -91,6 +90,8 @@ class GlyphHanger {
 				set = set.union( this.sets[family] );
 			}
 		}
+
+		set = set.union( this.whitelist.getCharacterSet() );
 
 		return set;
 	}
@@ -175,24 +176,23 @@ class GlyphHanger {
 		}
 	}
 
-	complete() {
+	getActiveSet() {
 		let set = this.sets['*'];
 		if( this.families && this.families !== true ) {
 			set = this.getSetForFamilies(this.families);
 		}
-
-		this.output(set);
-
-		if( this.onAfterUnicodes ) {
-			this.onAfterUnicodes( set.toHexRangeString() );
-		}
+		return set;
 	}
 
-	outputUnicodes( chars ) {
+	getUnicodeRange() {
+		return this.getActiveSet().toHexRangeString();
+	}
+
+	outputUnicodes() {
 		console.log( this.unicodes ? this.whitelist.getWhitelistAsUnicodes() : this.whitelist.getWhitelist() );
 	}
 
-	output(activeSet) {
+	output() {
 		var outputStr = [];
 
 		if( this.outputJson || this.families === true ) {
@@ -203,6 +203,7 @@ class GlyphHanger {
 			}
 			outputStr.push("{" + jsonLines.join(",") + "}");
 		} else {
+			let activeSet = this.getActiveSet();
 			// output the combined universal set
 			outputStr.push( this.getOutputForSet( activeSet ) );
 		}
@@ -231,6 +232,8 @@ class GlyphHanger {
 		out.push( "       Show only results matching one or more font-family names (comma separated, case insensitive)." );
 		out.push( "  --json" );
 		out.push( "       Show detailed JSON results (including per font-family glyphs for results)." );
+		out.push( "  --css" );
+		out.push( "       Output a @font-face block for the current data." );
 		out.push( "  --subset=*.ttf" );
 		out.push( "       Automatically subsets one or more font files using fonttools `pyftsubset`." );
 		out.push( "  --formats=ttf,woff,woff2,woff-zopfli" );
