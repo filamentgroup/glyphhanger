@@ -21,6 +21,7 @@ gh.setSubset( argv.subset );
 gh.setJson( argv.json );
 gh.setClassName( argv.classname );
 gh.setFamilies( argv.family );
+gh.setTimeout( argv.timeout );
 
 var subset = new GlyphHangerSubset();
 
@@ -43,6 +44,7 @@ if( argv.subset ) {
 // glyphhanger --help
 // glyphhanger
 // glyphhanger http://localhost/
+// glyphhanger http://localhost/ --timeout									(change timeout, in ms, default is 30000)
 // glyphhanger http://localhost/ http://localhost2/					(multiple urls are welcome)
 // glyphhanger http://localhost/ --spider 									(limit default 10)
 // glyphhanger http://localhost/ --spider-limit							(limit default 10)

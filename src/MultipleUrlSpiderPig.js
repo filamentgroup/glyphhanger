@@ -1,12 +1,12 @@
 const WebServer = require("./WebServer");
 const SpiderPig = require("@zachleat/spider-pig");
-const debug = require("debug")("glyphhanger:spiderpig");
+const debug = require("debug")("glyphhanger");
+const debugSpiderPig = require("debug")("glyphhanger:spiderpig");
 
 class MultipleSpiderPig {
 	constructor() {
 		this.limit = 10;
 		this.urls = [];
-		debug("initializing MultipleSpiderPig");
 	}
 
 	async getPiggy() {
@@ -39,7 +39,7 @@ class MultipleSpiderPig {
 		for( let url of urls ) {
 			if(!WebServer.isValidUrl(url)) {
 				if( !this.staticServer ) {
-					debug("Creating static server");
+					debugSpiderPig("Creating static server");
 					this.staticServer = await WebServer.getStaticServer();
 				}
 			}
@@ -50,7 +50,7 @@ class MultipleSpiderPig {
 			this.addUrls(await piggy.fetchLocalUrls(url));
 		}
 
-		debug("maybe closing static server");
+		debugSpiderPig("Closing static server");
 		WebServer.close(this.staticServer);
 	}
 
@@ -62,7 +62,7 @@ class MultipleSpiderPig {
 		}
 
 		urls.forEach(function( url, index ) {
-			debug( "glyphhanger found (" + ( index + 1 ) + "): " + url );
+			debug( "Found (" + ( index + 1 ) + "): " + url );
 		});
 
 		return urls;
@@ -70,7 +70,7 @@ class MultipleSpiderPig {
 
 	async finish() {
 		if( this.piggy ) {
-			debug("finishing");
+			debugSpiderPig("finishing");
 			await this.piggy.finish();
 		}
 	}

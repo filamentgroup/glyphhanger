@@ -13,6 +13,7 @@ class GlyphHanger {
 			"*": new CharacterSet()
 		};
 
+		this.timeout = 30000;
 		this.whitelist = new GlyphHangerWhitelist();
 	}
 
@@ -38,6 +39,12 @@ class GlyphHanger {
 
 	setClassName( classname ) {
 		this.className = classname;
+	}
+
+	setTimeout( timeout ) {
+		if(timeout || timeout === 0) {
+			this.timeout = timeout;
+		}
 	}
 
 	setUnicodesOutput( showString ) {
@@ -100,17 +107,26 @@ class GlyphHanger {
 		let browser = await this.getBrowser();
 		let page = await browser.newPage();
 
-		await page.goto(url, {
-			waitUntil: ["load", "networkidle0"]
-		});
+		try {
+			await page.goto(url, {
+				waitUntil: ["load", "networkidle0"],
+				timeout: this.timeout
+			});
 
-		return page;
+			return page;
+		} catch(e) {
+			console.log(chalk.red(`Error with ${url}:`), e);
+		}
 	}
 
 	async _fetchUrl( url ) {
 		debug( "requesting: %o", url );
 
 		let page = await this._getPage(url);
+
+		if(!page) {
+			return false;
+		}
 
 		page.on("console", function(msg) {
 			debugNodes("(headless browser console): %o", msg.text());
@@ -145,6 +161,7 @@ class GlyphHanger {
 	}
 
 	async fetchUrls( urls ) {
+		let failCount = 0;
 		for( let url of urls ) {
 			debug("WebServer.isValidUrl(%o)", url);
 
@@ -156,13 +173,19 @@ class GlyphHanger {
 			}
 
 			let urlStr = WebServer.getUrl(url);
-			await this._fetchUrl(urlStr);
+			if( (await this._fetchUrl(urlStr)) === false ) {
+				failCount++;
+			}
+		}
+
+		if( failCount ) {
+			console.log( chalk.red( `${failCount} of ${urls.length} urls failed.` ) );
 		}
 
 		let browser = await this.getBrowser();
 		await browser.close();
 
-		debug("maybe closing static server");
+		debug("Closing static server");
 		WebServer.close(this.staticServer);
 	}
 
@@ -243,6 +266,8 @@ class GlyphHanger {
 		out.push( "       Gather local URLs from the main page and navigate those URLs." );
 		out.push( "  --spider-limit=10" );
 		out.push( "       Maximum number of URLs gathered from the spider (default: 10, use 0 to ignore)." );
+		out.push( "  --timeout" );
+		out.push( "       Maximum navigation time for a single URL." );
 		console.log( out.join( "\n" ) );
 	}
 }
