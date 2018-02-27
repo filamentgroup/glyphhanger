@@ -1,6 +1,6 @@
 # glyphhanger
 
-Utility to automatically subset fonts for serving on the web. Can generates a combined list of every glyph used on a list of sample files or urls.
+Your web font utility belt. It shows what unicode-ranges are used on a web site (optionally for a font-family or for each font-family). It can also subsets web fonts. It makes julienne fries.
 
 ## Installation
 
