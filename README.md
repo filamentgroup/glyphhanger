@@ -201,10 +201,6 @@ Or, alternatively:
 
 `./node_modules/mocha/bin/mocha` (or just `mocha` if you already have it installed globally with `npm install -g mocha`).
 
-## Limitations
-
-* [Pseudo-element CSS `content` is not parsed.](https://github.com/filamentgroup/glyphhanger/issues/10)
-
 ## Example using Unicode code points
 
 ```
