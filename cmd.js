@@ -8,7 +8,10 @@ var GlyphHangerFontFace = require( "./src/GlyphHangerFontFace" );
 var MultipleSpiderPigs = require( "./src/MultipleUrlSpiderPig" );
 const debug = require( "debug" )( "glyphhanger:cli" );
 
-var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, argv.US_ASCII );
+var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, {
+	US_ASCII: argv.US_ASCII,
+	LATIN: argv.LATIN
+});
 
 var gh = new GlyphHanger();
 if( argv.unicodes ) {
@@ -54,6 +57,7 @@ if( argv.subset ) {
 // glyphhanger --whitelist=ABCD															(convert characters to unicode range)
 // glyphhanger --US_ASCII																		(convert characters to unicode range)
 // glyphhanger --US_ASCII --whitelist=ABCD									(convert characters to unicode range)
+// glyphhanger --LATIN
 // glyphhanger --subset=*.ttf																(file format conversion)
 // glyphhanger --subset=*.ttf --whitelist=ABCD							(reduce to whitelist characters)
 // glyphhanger --subset=*.ttf --US_ASCII										(reduce to US_ASCII characters)

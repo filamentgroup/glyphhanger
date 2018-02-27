@@ -24,19 +24,25 @@ describe( "GlyphHangerWhitelist", function() {
 		});
 
 		it( "made a simple whitelist from string with US_ASCII", function() {
-			let wl = new GlyphHangerWhitelist("abc", true);
+			let wl = new GlyphHangerWhitelist("abc", {
+				US_ASCII: true
+			});
 			assert.equal( wl.getWhitelistAsUnicodes(), "U+20-7E" );
 			assert.equal( wl.isEmpty(), false );
 		});
 
 		it( "made a simple whitelist from empty string with US_ASCII", function() {
-			let wl = new GlyphHangerWhitelist("", true);
+			let wl = new GlyphHangerWhitelist("", {
+				US_ASCII: true
+			});
 			assert.equal( wl.getWhitelistAsUnicodes(), "U+20-7E" );
 			assert.equal( wl.isEmpty(), false );
 		});
 
 		it( "made a simple whitelist from unicode range with US_ASCII", function() {
-			let wl = new GlyphHangerWhitelist("U+61-63", true);
+			let wl = new GlyphHangerWhitelist("U+61-63", {
+				US_ASCII: true
+			});
 			assert.equal( wl.getWhitelistAsUnicodes(), "U+20-7E" );
 			assert.equal( wl.isEmpty(), false );
 		});
@@ -51,6 +57,14 @@ describe( "GlyphHangerWhitelist", function() {
 			let wl = new GlyphHangerWhitelist(true);
 			assert.equal( wl.getWhitelistAsUnicodes(), "" );
 			assert.equal( wl.isEmpty(), true );
+		});
+
+		it( "using LATIN", function() {
+			let wl = new GlyphHangerWhitelist("", {
+				LATIN: true
+			});
+
+			assert.equal( wl.isEmpty(), false );
 		});
 	});
 

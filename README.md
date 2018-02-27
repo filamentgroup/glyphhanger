@@ -134,6 +134,9 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 # shortcut to add in a whitelist of all of US-ASCII (with an optional whitelist)
 > glyphhanger https://google.com --US_ASCII --whitelist=™
+
+# shortcut to add in a whitelist of all Latin characters (with an optional whitelist)
+> glyphhanger https://google.com --LATIN --whitelist=™
 ```
 
 #### Manual subsetting
