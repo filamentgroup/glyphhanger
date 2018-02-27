@@ -28,6 +28,13 @@
 			var nodes = Array.from(contextNode.getElementsByTagName("*"));
 			nodes.push(contextNode);
 			nodes.forEach(function(node) {
+				if( node.tagName ) {
+					var tagName = node.tagName.toLowerCase();
+					if( tagName === "script" ) {
+						return;
+					}
+				}
+
 				this.getTextNodeChildren(node).filter(function( textNode ) {
 					// only non-empty values
 					return this.hasValue( textNode );

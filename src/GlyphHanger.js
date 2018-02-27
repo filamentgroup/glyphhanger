@@ -140,10 +140,10 @@ class GlyphHanger {
 			path: path.resolve(__dirname, "../src/glyphhanger-script.js")
 		});
 
-		debugNodes("Full document.body.innerHTML:");
-		debugNodes(await page.evaluate( function() {
-			return document.body.innerHTML;
-		}));
+		// debugNodes("Full document.body.innerHTML:");
+		// debugNodes(await page.evaluate( function() {
+		// 	return document.body.innerHTML;
+		// }));
 
 		let json = await page.evaluate( function(docClassName) {
 			if(docClassName && docClassName !== "undefined") {
