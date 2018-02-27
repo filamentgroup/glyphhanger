@@ -108,7 +108,7 @@ describe( "GlyphHanger Injected Script Tests", function() {
 
 		var ghs = new GlyphHangerScript();
 		ghs.setEnv(window);
-		ghs.saveGlyphs( "efgh")
+		ghs.saveGlyphs( "efgh", "serif");
 		ghs.init( div );
 
 		it( "should match", function() {

@@ -2,7 +2,6 @@ var assert = require( "assert" );
 var path = require( "path" );
 var childProcess = require( "child_process" );
 var fs = require( "fs" );
-var path = require( "path" );
 
 describe( "CLI (version, help)", function() {
 	it( "outputs version", function () {

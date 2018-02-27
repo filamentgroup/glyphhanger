@@ -19,9 +19,60 @@
 		}
 	};
 
-	GH.prototype.getFontFamilyNameFromNode = function(node) {
-		var fontFamilyList = node.parentNode ? (this.win.getComputedStyle( node.parentNode ).getPropertyValue( "font-family" ) || this.defaultFontFamily) : null;
-		return this.getFontFamilyName( fontFamilyList );
+	GH.prototype.setEnv = function(win) {
+		this.win = win;
+	};
+
+	GH.prototype.init = function( contextNode ) {
+		if( contextNode ) {
+			var nodes = Array.from(contextNode.getElementsByTagName("*"));
+			nodes.push(contextNode);
+			nodes.forEach(function(node) {
+				this.getTextNodeChildren(node).filter(function( textNode ) {
+					// only non-empty values
+					return this.hasValue( textNode );
+				}.bind( this )).forEach( function( textNode ) {
+					var fontFamily = this.getFontFamilyNameFromNode( textNode, null );
+					var text = this.getNodeValue( textNode );
+					console.log( "font-family `" + fontFamily + "` has text: ", text );
+
+					this.saveGlyphs( text, fontFamily );
+				}.bind( this ));
+
+				var beforeContent = this.getPseudoContent(node, ":before");
+				if( beforeContent ) {
+					var beforeFamily = this.getFontFamilyNameFromNode( node, ":before" );
+					console.log( "(:before) font-family `" + beforeFamily + "` has text: ", beforeContent );
+					this.saveGlyphs(beforeContent, beforeFamily);
+				}
+
+				var afterContent = this.getPseudoContent(node, ":after");
+				if( afterContent ) {
+					var afterFamily = this.getFontFamilyNameFromNode( node, ":after" );
+					console.log( "(:after) font-family `" + afterFamily + "` has text: ", afterContent );
+					this.saveGlyphs(afterContent, afterFamily);
+				}
+			}.bind( this ));
+		}
+	}
+
+	GH.prototype.getPseudoContent = function(node, pseudo) {
+		if(!pseudo) {
+			return;
+		}
+		return this.removeQuotes(this.win.getComputedStyle( node, pseudo ).getPropertyValue( "content" ));
+	};
+
+	GH.prototype.removeQuotes = function(text) {
+		if( text.indexOf("'") === 0 ) {
+			// using single quotes
+			return text.replace(/[\']/g, "");
+		} else if( text.indexOf('"') === 0 ) {
+			// using double quotes
+			return text.replace(/[\"]/g, "");
+		}
+
+		return text;
 	};
 
 	GH.prototype.getFontFamilyName = function(fontFamilyList) {
@@ -34,31 +85,21 @@
 			return family.trim();
 		}).map(function(family) {
 			// remove quotes
-			return family.replace(/[\"\']/g, "");
-		});
+			return this.removeQuotes(family);
+		}.bind( this ));
 
 		return split.length ? split[0] : "";
 	};
 
-	GH.prototype.setEnv = function(win) {
-		this.win = win;
-	};
-
-	GH.prototype.init = function( parentNode ) {
-		if( parentNode ) {
-			this.findTextNodes( parentNode ).filter(function( node ) {
-				// only non-empty values
-				return this.hasValue( node );
-			}.bind( this )).forEach( function( node ) {
-				var fontFamily = this.getFontFamilyNameFromNode( node );
-				this.displayFontFamilyNames[ fontFamily.toLowerCase() ] = fontFamily;
-				var text = this.getNodeValue( node );
-				console.log( "font-family `" + fontFamily + "` has text: ", text );
-
-				this.saveGlyphs( text, fontFamily.toLowerCase() );
-			}.bind( this ));
+	GH.prototype.getFontFamilyNameFromNode = function(node, pseudo) {
+		var context = node;
+		if( node.nodeType === 3 ) {
+			context = node.parentNode;
 		}
-	}
+
+		var fontFamilyList = context ? (this.win.getComputedStyle( context, pseudo ).getPropertyValue( "font-family" ) || this.defaultFontFamily) : null;
+		return this.getFontFamilyName( fontFamilyList );
+	};
 
 	GH.prototype.fakeInnerText = function( node ) {
 		var value = node.nodeValue.trim();
@@ -98,15 +139,13 @@
 		return (node.innerText || node.nodeValue).trim().length > 0;
 	};
 
-	GH.prototype.findTextNodes = function( node ) {
-		// via http://stackoverflow.com/questions/10730309/find-all-text-nodes-in-html-page
+	GH.prototype.getTextNodeChildren = function( node ) {
+		// modified from http://stackoverflow.com/questions/10730309/find-all-text-nodes-in-html-page
 		var all = [];
 		var node;
 		for( node = node.firstChild; node; node = node.nextSibling ) {
 			if( node.nodeType === 3 ) {
 				all.push( node );
-			} else {
-				all = all.concat( this.findTextNodes( node ) );
 			}
 		}
 		return all;
@@ -117,7 +156,12 @@
 		this.globalSet = this.globalSet.union( set );
 
 		if( fontFamily ) {
-			this.fontFamilySets[ fontFamily ] = this.getFamilySet( fontFamily ).union( set );
+			var key = fontFamily.toLowerCase();
+			this.displayFontFamilyNames[ key ] = fontFamily;
+
+			if( key ) {
+				this.fontFamilySets[ key ] = this.getFamilySet( key ).union( set );
+			}
 		}
 	};
 
