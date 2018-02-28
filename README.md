@@ -6,7 +6,7 @@ Your web font utility belt. It shows what unicode-ranges are used on a web site 
 
 Available on [npm](https://www.npmjs.com/package/glyphhanger).
 
-```
+```sh
 npm install -g glyphhanger
 ```
 
@@ -14,7 +14,7 @@ npm install -g glyphhanger
 
 ### Find the glyphs in a local file or url
 
-```
+```sh
 # local file
 > glyphhanger ./test.html
 > glyphhanger ./test.txt
@@ -45,7 +45,7 @@ npm install -g glyphhanger
 
 Replaces `--verbose` in `v3.0.0`.
 
-```
+```sh
 > DEBUG=glyphhanger* glyphhanger http://example.com
 ```
 
@@ -56,7 +56,7 @@ Use `--subset=*.ttf` to select some font files for subsetting. Note that you can
 
 #### Just make optimized TTF/WOFF/WOFF2 files
 
-```
+```sh
 > glyphhanger --subset=*.ttf
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 70.25 KB)
@@ -66,7 +66,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 #### Subset to specific characters only (no URLs)
 
-```
+```sh
 > glyphhanger --whitelist=ABCD --subset=*.ttf
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 4.42 KB)
@@ -76,7 +76,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 #### Subset to the glyphs at a URL
 
-```
+```sh
 > glyphhanger ./test.html --subset=*.ttf
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 24 KB)
@@ -86,7 +86,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 #### Subset to the glyphs at a URL only using content that matches a specific font-family
 
-```
+```sh
 > glyphhanger ./test.html --subset=*.ttf --family='Lato,sans-serif'
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 24 KB)
@@ -99,7 +99,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 Available formats: `ttf,woff,woff-zopfli,woff2`.
 
-```
+```sh
 > glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=*.ttf
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff (was 145.06 KB, now 2.88 KB)
@@ -110,7 +110,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 Because we’re not parsing URLs for glyphs, we can optionally use `--family='My Family Name'` to set the name used in the `@font-face` block. Normally `--family` would tell GlyphHanger to only parse text data from nodes using one of the fonts listed in `--family`.
 
-```
+```sh
 > glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=*.ttf --css
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff (was 145.06 KB, now 2.88 KB)
@@ -125,7 +125,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 ### Whitelist Characters
 
-```
+```sh
 # Add in a whitelist of specific characters
 > glyphhanger https://google.com --whitelist=abcdefgh
 
@@ -140,13 +140,13 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 ```
 
 #### Manual subsetting
-```
+```sh
 > glyphhanger --whitelist=ABCD --subset=*.ttf
 ```
 
 #### Converting unicode ranges and back again
 
-```
+```sh
 # Convert a string to a unicode-range
 > glyphhanger --whitelist=ABCD
 > glyphhanger --US_ASCII
@@ -160,7 +160,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 Finds all the `<a href>` elements on the page with *local* (not external) links and adds those to the glyphhanger URLs. If you specify `--spider-limit`, `--spider` is assumed.
 
-```
+```sh
 > glyphhanger ./test.html --spider
 > glyphhanger ./test.html --spider-limit
 > glyphhanger ./test.html --spider-limit=10
@@ -203,7 +203,7 @@ Or, alternatively:
 
 ## Example using Unicode code points
 
-```
+```sh
 > glyphhanger https://www.zachleat.com/web/ --spider --spider-limit=5 > glyphhanger_zachleat_output
 
 > cat glyphhanger_zachleat_output
