@@ -14,10 +14,6 @@ var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, {
 });
 
 var gh = new GlyphHanger();
-if( argv.unicodes ) {
-	console.log( '--unicodes was made default in v2.0. To output characters instead of code points, use --string' );
-	require( "shelljs" ).exit(1);
-}
 gh.setUnicodesOutput( argv.string );
 gh.setWhitelist( whitelist );
 gh.setSubset( argv.subset );
