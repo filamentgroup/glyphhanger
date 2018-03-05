@@ -193,13 +193,11 @@ python setup.py install
 
 ## Testing
 
-GlyphHanger uses Mocha for testing.
+* Build Status: [![Build Status](https://travis-ci.org/filamentgroup/glyphhanger.svg?branch=master)](https://travis-ci.org/filamentgroup/glyphhanger)
 
 `npm test` will run the tests.
 
-Or, alternatively:
-
-`./node_modules/mocha/bin/mocha` (or just `mocha` if you already have it installed globally with `npm install -g mocha`).
+Or, alternatively `./node_modules/mocha/bin/mocha` (or just `mocha` if you already have it installed globally with `npm install -g mocha`).
 
 ## Example using Unicode code points
 
