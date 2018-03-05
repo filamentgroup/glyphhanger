@@ -229,7 +229,7 @@ class GlyphHanger {
 			for( var family in this.sets ) {
 				jsonLines.push("\"" + family + "\": \"" + this.getOutputForSet( this.sets[family] ) + "\"");
 			}
-			outputStr.push("{" + jsonLines.join(",") + "}");
+			outputStr.push("{ " + jsonLines.join(",\n  ") + " }");
 		} else {
 			let activeSet = this.getActiveSet();
 			// output the combined universal set
