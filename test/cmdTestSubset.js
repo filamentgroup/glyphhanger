@@ -48,8 +48,6 @@ describe( "CLI (subset)", function() {
 		fs.unlinkSync( subsetPath );
 
 		var cssPath = fontPath.split( ".ttf" ).join( ".css" );
-		console.log( cssPath );
-
 		assert.ok( fs.existsSync( cssPath ) );
 		fs.unlinkSync( cssPath );
 	});
