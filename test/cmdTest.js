@@ -239,36 +239,3 @@ describe( "CLI (css)", function() {
 }`) > - 1);
 	});
 });
-
-// 
-// TODO glyphhanger --subset=*.ttf																(file format conversion)
-// DONE glyphhanger --subset=*.ttf --whitelist=ABCD								(reduce to whitelist characters)
-// TODO glyphhanger --subset=*.ttf --US_ASCII											(reduce to US_ASCII characters)
-// TODO glyphhanger --subset=*.ttf --US_ASCII --whitelist=ABCD		(reduce to US_ASCII union with whitelist)
-
-describe( "CLI (subset)", function() {
-	it( "Produced a file", function () {
-		// due to some unknown permission issue, this test fails on travis
-		if(process.env.TRAVIS) {
-			this.skip();
-		}
-
-		this.timeout( 10000 );
-
-		var fontPath = "test/fonts/sourcesanspro-regular.ttf";
-		// console.log( "__dirname:", __dirname );
-
-		let output = childProcess.execSync(`node cmd.js --whitelist=ABC --subset=${fontPath} --formats=ttf`, {
-			cwd: path.resolve(__dirname, "..")
-		});
-
-		// console.log( "childProcess output: ", output.toString() );
-
-		var subsetPath = fontPath.split( ".ttf" ).join( "-subset.ttf" );
-		// console.log("old fontPath: ", fontPath, " new fontpath: ", subsetPath);
-
-		var subset = fs.existsSync( subsetPath );
-		assert.ok( subset );
-		fs.unlinkSync( subsetPath );
-	});
-});

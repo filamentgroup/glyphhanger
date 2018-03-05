@@ -124,6 +124,7 @@ if( argv.version ) {
 			if(!whitelist.isEmpty()) {
 				fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
 			}
+			fontface.writeCSSFiles();
 			fontface.output();
 		} catch(e) {
 			console.log("GlyphHangerFontFace Error: ", e);
@@ -134,6 +135,7 @@ if( argv.version ) {
 
 		try {
 			fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
+			fontface.writeCSSFiles();
 			fontface.output();
 		} catch(e) {
 			console.log("GlyphHangerFontFace Error: ", e);

@@ -59,7 +59,7 @@ class GlyphHangerFontFace {
 			content.push(`  src: ${this.getSrcDescriptor(ttfPath, outputDir || parsePath(ttfPath).dir)};`);
 		}
 
-		if( this.unicodeRange.trim() ) {
+		if( this.unicodeRange && this.unicodeRange.trim() ) {
 			content.push(`  unicode-range: ${this.unicodeRange};`);
 		}
 
