@@ -67,10 +67,11 @@
 		if(!pseudo) {
 			return;
 		}
-		return this.removeQuotes(this.win.getComputedStyle( node, pseudo ).getPropertyValue( "content" ));
+		return this.removeQuotes(this.win.getComputedStyle( node, pseudo ).getPropertyValue( "content" ), true);
 	};
 
-	GH.prototype.removeQuotes = function(text) {
+	// TODO resolve keywords when not string content
+	GH.prototype.removeQuotes = function(text, requireQuotes) {
 		if( text.indexOf("'") === 0 ) {
 			// using single quotes
 			return text.replace(/[\']/g, "");
@@ -79,7 +80,9 @@
 			return text.replace(/[\"]/g, "");
 		}
 
-		return text;
+		if( !requireQuotes ) {
+			return text;
+		}
 	};
 
 	GH.prototype.getFontFamilyName = function(fontFamilyList) {
@@ -103,8 +106,12 @@
 		if( node.nodeType === 3 ) {
 			context = node.parentNode;
 		}
-
-		var fontFamilyList = context ? (this.win.getComputedStyle( context, pseudo ).getPropertyValue( "font-family" ) || this.defaultFontFamily) : null;
+		var fontFamilyList;
+		if( context ) {
+			var fontFamily = this.win.getComputedStyle( context, pseudo ).getPropertyValue( "font-family" );
+			console.log( "node font-family:", fontFamily, "fallback to", this.defaultFontFamily );
+			fontFamilyList = fontFamily || this.defaultFontFamily;
+		}
 		return this.getFontFamilyName( fontFamilyList );
 	};
 
