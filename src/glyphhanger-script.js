@@ -23,7 +23,7 @@
 		this.win = win;
 	};
 
-	GH.prototype.init = function( contextNode ) {
+	GH.prototype.init = function( contextNode, onlyVisible ) {
 		if( contextNode ) {
 			var nodes = Array.from(contextNode.getElementsByTagName("*"));
 			nodes.push(contextNode);
@@ -33,6 +33,10 @@
 					if( tagName === "script" ) {
 						return;
 					}
+				}
+
+				if( onlyVisible && !(node.offsetWidth || node.offsetHeight || node.getClientRects().length) ) {
+					return;
 				}
 
 				this.getTextNodeChildren(node).filter(function( textNode ) {
