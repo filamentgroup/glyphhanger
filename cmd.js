@@ -21,6 +21,7 @@ gh.setJson( argv.json );
 gh.setClassName( argv.classname );
 gh.setFamilies( argv.family );
 gh.setTimeout( argv.timeout );
+gh.setVisibilityCheck( argv.onlyVisible );
 
 var subset = new GlyphHangerSubset();
 subset.setOutputDirectory(argv.output);

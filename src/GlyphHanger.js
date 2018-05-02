@@ -14,6 +14,7 @@ class GlyphHanger {
 		};
 
 		this.timeout = 30000;
+		this.onlyVisible = false;
 		this.whitelist = new GlyphHangerWhitelist();
 	}
 
@@ -53,6 +54,10 @@ class GlyphHanger {
 
 	getIsCodePoints() {
 		return this.subset ? true : this.unicodes;
+	}
+
+	setVisibilityCheck( onlyVisible ) {
+		this.onlyVisible = !!onlyVisible;
 	}
 
 	setWhitelist( whitelistObj ) {
@@ -145,7 +150,7 @@ class GlyphHanger {
 		// 	return document.body.innerHTML;
 		// }));
 
-		let json = await page.evaluate( function(docClassName) {
+		let json = await page.evaluate( function(docClassName, onlyVisible) {
 			if(docClassName && docClassName !== "undefined") {
 				// add to both the documentElement and document.body because why not
 				document.documentElement.className += " " + docClassName;
@@ -156,10 +161,10 @@ class GlyphHanger {
 			}
 
 			var hanger = new GlyphHanger();
-			hanger.init( document.body );
+			hanger.init( document.body, onlyVisible );
 
 			return hanger.toJSON();
-		}, this.className);
+		}, this.className, this.onlyVisible);
 
 		debug("Adding to set for %o: %o", url, json);
 		this.addToSets(json);
@@ -273,6 +278,8 @@ class GlyphHanger {
 		out.push( "       Maximum number of URLs gathered from the spider (default: 10, use 0 to ignore)." );
 		out.push( "  --timeout" );
 		out.push( "       Maximum navigation time for a single URL." );
+		out.push( "  --onlyVisible" );
+		out.push( "       Only process text that is actually visible." );
 		console.log( out.join( "\n" ) );
 	}
 }

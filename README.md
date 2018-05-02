@@ -171,6 +171,14 @@ Finds all the `<a href>` elements on the page with *local* (not external) links 
 
 Default `--spider-limit` is 10. Set to `0` for no limit. This will greatly affect how long the task takes.
 
+### Only search your page for visible text
+
+Make your output even smaller by only subsetting characters that are visible on the page.
+
+```sh
+> glyphhanger ./test.html --onlyVisible
+```
+
 ### Installing `pyftsubset`
 
 See [https://github.com/fonttools/fonttools](https://github.com/fonttools/fonttools).

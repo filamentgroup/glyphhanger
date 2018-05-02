@@ -238,4 +238,14 @@ describe( "CLI (css)", function() {
   unicode-range: U+64-69;
 }`) > - 1);
 	});
+
+	it( "only returns visible text --onlyVisible", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/test-onlyVisible.html --onlyVisible`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.ok( output.toString().trim(), "U+31-34" );
+	});
 });
