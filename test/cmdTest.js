@@ -246,6 +246,26 @@ describe( "CLI (css)", function() {
 			cwd: path.resolve(__dirname, "..")
 		});
 
-		assert.ok( output.toString().trim(), "U+31-34" );
+		assert.equal( output.toString().trim(), "U+31-34" );
+	});
+
+	it( "only returns text from elements matching --cssSelector", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/test-cssSelector.html --cssSelector="pre"`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "U+20,U+61,U+63,U+65,U+67-69,U+6D-70,U+73,U+74" );
+	});
+
+	it( "--onlyVisible overrides --cssSelector", function () {
+		this.timeout( 10000 );
+
+		let output = childProcess.execSync(`node cmd.js test/test-cssSelectorVisible.html --cssSelector="pre" --onlyVisible`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "U+20,U+61,U+63,U+65,U+67-69,U+6D-70,U+73,U+74" );
 	});
 });

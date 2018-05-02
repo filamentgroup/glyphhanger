@@ -179,6 +179,14 @@ Make your output even smaller by only subsetting characters that are visible on 
 > glyphhanger ./test.html --onlyVisible
 ```
 
+### Only search your page for text matching a CSS selector
+
+Limit results to text inside of elements that match a CSS selector
+
+```sh
+> glyphhanger ./test.html --cssSelector="pre, #header, .popUp". If paired with `--onlyVisible`, it will only return elements that are both visible and match the selector
+```
+
 ### Installing `pyftsubset`
 
 See [https://github.com/fonttools/fonttools](https://github.com/fonttools/fonttools).

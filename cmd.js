@@ -22,6 +22,7 @@ gh.setClassName( argv.classname );
 gh.setFamilies( argv.family );
 gh.setTimeout( argv.timeout );
 gh.setVisibilityCheck( argv.onlyVisible );
+gh.setCSSSelector( argv.cssSelector );
 
 var subset = new GlyphHangerSubset();
 subset.setOutputDirectory(argv.output);

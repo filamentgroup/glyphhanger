@@ -60,6 +60,10 @@ class GlyphHanger {
 		this.onlyVisible = !!onlyVisible;
 	}
 
+	setCSSSelector( cssSelector ) {
+		this.cssSelector = cssSelector || '*'
+	}
+
 	setWhitelist( whitelistObj ) {
 		this.whitelist = whitelistObj;
 
@@ -150,7 +154,7 @@ class GlyphHanger {
 		// 	return document.body.innerHTML;
 		// }));
 
-		let json = await page.evaluate( function(docClassName, onlyVisible) {
+		let json = await page.evaluate( function(docClassName, opts) {
 			if(docClassName && docClassName !== "undefined") {
 				// add to both the documentElement and document.body because why not
 				document.documentElement.className += " " + docClassName;
@@ -161,10 +165,14 @@ class GlyphHanger {
 			}
 
 			var hanger = new GlyphHanger();
-			hanger.init( document.body, onlyVisible );
+			hanger.init( document.body, opts );
 
 			return hanger.toJSON();
-		}, this.className, this.onlyVisible);
+    }, this.className, {
+      onlyVisible: this.onlyVisible,
+      cssSelector: this.cssSelector
+    }
+    );
 
 		debug("Adding to set for %o: %o", url, json);
 		this.addToSets(json);

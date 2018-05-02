@@ -23,7 +23,8 @@
 		this.win = win;
 	};
 
-	GH.prototype.init = function( contextNode, onlyVisible ) {
+	GH.prototype.init = function( contextNode, opts ) {
+		opts = opts || {};
 		if( contextNode ) {
 			var nodes = Array.from(contextNode.getElementsByTagName("*"));
 			nodes.push(contextNode);
@@ -35,7 +36,11 @@
 					}
 				}
 
-				if( onlyVisible && !(node.offsetWidth || node.offsetHeight || node.getClientRects().length) ) {
+				if( opts.onlyVisible && !(node.offsetWidth || node.offsetHeight || node.getClientRects().length) ) {
+					return;
+				}
+
+				if( opts.cssSelector && !node.matches( opts.cssSelector ) ) {
 					return;
 				}
 
