@@ -4,7 +4,7 @@ const path = require( "path" );
 const { URL } = require("url");
 const debug = require("debug")("glyphhanger:webserver");
 
-const SITE_PATH = path.resolve(__dirname, "..");
+const SITE_PATH = path.resolve(process.cwd(), ".");
 const SERVER_PORT = 8093;
 
 class WebServer {
