@@ -113,10 +113,16 @@ class GlyphHanger {
 		let page = await browser.newPage();
 
 		try {
-			await page.goto(url, {
+			let response = await page.goto(url, {
 				waitUntil: ["load", "networkidle0"],
 				timeout: this.timeout
 			});
+
+			let statusCode = response.status();
+
+			if ( statusCode !== 200 ) {
+				console.log(chalk.yellow(`Warning: ${url} had a non 200 HTTP status code: (${statusCode})`));
+			}
 
 			return page;
 		} catch(e) {
