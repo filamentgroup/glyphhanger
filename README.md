@@ -74,6 +74,8 @@ Replaces `--verbose` in `v3.0.0`.
 
 Use `--subset=*.ttf` to select some font files for subsetting. Note that you can also [subset yourself manually with `pyftsubset`](docs/manual-subset.md) (but glyphhanger is easier).
 
+_Note that the `DEBUG` output documented above will log the specific `pyftsubset` command that `glyphhanger` used. Read more [about `pyftsubset` defaults](https://github.com/filamentgroup/glyphhanger/issues/49)._
+
 #### Just make optimized TTF/WOFF/WOFF2 files
 
 ```sh
