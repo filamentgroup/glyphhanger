@@ -206,9 +206,6 @@ Limit results to text inside of elements that match a CSS selector
 glyphhanger ./test.html --cssSelector="pre, #header, .popUp". If paired with `--onlyVisible`, it will only return elements that are both visible and match the selector
 ```
 
-## Enhancement Queue
-
-* [Top Voted Issues](https://github.com/filamentgroup/glyphhanger/issues?q=label%3Aneeds-votes+sort%3Areactions-%2B1-desc)
 
 ## Troubleshooting
 
@@ -221,6 +218,10 @@ glyphhanger ./test.html --cssSelector="pre, #header, .popUp". If paired with `--
 `npm test` will run the tests.
 
 Or, alternatively `./node_modules/mocha/bin/mocha` (or just `mocha` if you already have it installed globally with `npm install -g mocha`).
+
+## Enhancement Queue
+
+* [Top Voted Issues 👍](https://github.com/filamentgroup/glyphhanger/issues?q=label%3Aneeds-votes+sort%3Areactions-%2B1-desc)
 
 ## Alternatives to GlyphHanger
 
