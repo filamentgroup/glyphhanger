@@ -210,6 +210,10 @@ glyphhanger ./test.html --cssSelector="pre, #header, .popUp". If paired with `--
 
 * [Top Voted Issues](https://github.com/filamentgroup/glyphhanger/issues?q=label%3Aneeds-votes+sort%3Areactions-%2B1-desc)
 
+## Troubleshooting
+
+* `glyphhanger` uses Puppeteer, the headless Chrome browser. Check out the [Puppeteer Troubleshooting documentation](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md#chrome-headless-doesnt-launch).
+
 ## Testing
 
 * Build Status: [![Build Status](https://travis-ci.org/filamentgroup/glyphhanger.svg?branch=master)](https://travis-ci.org/filamentgroup/glyphhanger)
