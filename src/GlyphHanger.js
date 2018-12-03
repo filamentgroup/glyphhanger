@@ -189,7 +189,7 @@ class GlyphHanger {
 		for( let url of urls ) {
 			debug("WebServer.isValidUrl(%o)", url);
 
-			if(!WebServer.isValidUrl(url)) {
+			if(!WebServer.isValidUrl(url) || url.indexOf('http://localhost:') === 0 ) {
 				if( !this.staticServer ) {
 					debug("Creating static server");
 					this.staticServer = await WebServer.getStaticServer();
