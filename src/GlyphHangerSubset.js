@@ -110,8 +110,8 @@ class GlyphHangerSubset {
 		var outputDir = this.outputDirectory || parsePath( inputFile ).dir;
 		var outputFullPath = path.join( outputDir, outputFilename );
 		var cmd = [ "pyftsubset" ];
-		cmd.push( inputFile );
-		cmd.push( "--output-file=" + outputFullPath );
+		cmd.push( "\"" + inputFile + "\"" );
+		cmd.push( "--output-file=\"" + outputFullPath + "\"" );
 		cmd.push( "--unicodes=" + unicodes );
 		cmd.push( "--layout-features='*'" );
 		if( format ) {
