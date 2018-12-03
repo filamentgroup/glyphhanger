@@ -49,7 +49,6 @@ Replaces `--verbose` in `v3.0.0`.
 > DEBUG=glyphhanger* glyphhanger http://example.com
 ```
 
-
 ### Subset font files automatically
 
 Use `--subset=*.ttf` to select some font files for subsetting. Note that you can also [subset yourself manually with `pyftsubset`](docs/manual-subset.md) (but glyphhanger is easier).
@@ -93,7 +92,6 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB,
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 14.34 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 11.37 KB)
 ```
-
 
 #### Specify the formats to output
 
@@ -215,16 +213,7 @@ python setup.py install
 
 Or, alternatively `./node_modules/mocha/bin/mocha` (or just `mocha` if you already have it installed globally with `npm install -g mocha`).
 
-## Example using Unicode code points
+## Alternatives to GlyphHanger
 
-```sh
-> glyphhanger https://www.zachleat.com/web/ --spider --spider-limit=5 > glyphhanger_zachleat_output
-
-> cat glyphhanger_zachleat_output
- U+20,U+21,U+23,U+24,U+26,U+28,U+29,U+2B-3A,U+3F-5B,U+5D,U+61-7A,U+BB,U+2013,U+2014,U+2019,U+201C,U+201D,U+2192,U+2600,U+2605,U+27A1,U+FE0F,U+1F525
-
-> pyftsubset sourcesanspro-regular.ttf --unicodes-file=glyphhanger_zachleat_output --flavor=woff
-# Reduces the 166KB .ttf font file to an 8KB .woff web font file.
-``` 
-
-You can use `--string` to use String values instead, but first _(read [Issue #4](https://github.com/filamentgroup/glyphhanger/issues/4)  on why Unicode code points are better)_
+* [unicode-ranger from Jeremy Wagner](https://github.com/malchata/unicode-ranger)
+* [subfont from Peter Müller](https://www.npmjs.com/package/subfont)
