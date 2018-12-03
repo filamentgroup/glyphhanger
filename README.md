@@ -10,35 +10,56 @@ Available on [npm](https://www.npmjs.com/package/glyphhanger).
 npm install -g glyphhanger
 ```
 
+### Prerequisite: `pyftsubset`
+
+See [https://github.com/fonttools/fonttools](https://github.com/fonttools/fonttools).
+
+```sh
+pip install fonttools
+```
+
+```sh
+# Additional installation for --flavor=woff2
+git clone https://github.com/google/brotli
+cd brotli
+python setup.py install
+
+# Additional installation for --flavor=woff --with-zopfli
+git clone https://github.com/anthrotype/py-zopfli
+cd py-zopfli
+git submodule update --init --recursive
+python setup.py install
+```
+
 ## Usage
 
 ### Find the glyphs in a local file or url
 
 ```sh
 # local file
-> glyphhanger ./test.html
-> glyphhanger ./test.txt
+glyphhanger ./test.html
+glyphhanger ./test.txt
 
 # output characters instead of Unicode code points
-> glyphhanger ./test.html --string
+glyphhanger ./test.html --string
 
 # remote URL
-> glyphhanger http://example.com
+glyphhanger http://example.com
 
 # multiple URLs, optionally using HTTPS
-> glyphhanger https://google.com https://www.filamentgroup.com
+glyphhanger https://google.com https://www.filamentgroup.com
 
 # show results for each font-family on the page
-> glyphhanger ./test.html --json
+glyphhanger ./test.html --json
 
 # show results only for one or more font-family names
-> glyphhanger ./test.html --family='Open Sans, Roboto'
+glyphhanger ./test.html --family='Open Sans, Roboto'
 
 # Show version
-> glyphhanger --version
+glyphhanger --version
 
 # See more usage
-> glyphhanger --help
+glyphhanger --help
 ```
 
 ### Debug Mode
@@ -125,33 +146,33 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 
 ```sh
 # Add in a whitelist of specific characters
-> glyphhanger https://google.com --whitelist=abcdefgh
+glyphhanger https://google.com --whitelist=abcdefgh
 
 # Add in a whitelist as a unicode range
-> glyphhanger https://google.com --whitelist=U+26
+glyphhanger https://google.com --whitelist=U+26
 
 # shortcut to add in a whitelist of all of US-ASCII (with an optional whitelist)
-> glyphhanger https://google.com --US_ASCII --whitelist=™
+glyphhanger https://google.com --US_ASCII --whitelist=™
 
 # shortcut to add in a whitelist of all Latin characters (with an optional whitelist)
-> glyphhanger https://google.com --LATIN --whitelist=™
+glyphhanger https://google.com --LATIN --whitelist=™
 ```
 
 #### Manual subsetting
 ```sh
-> glyphhanger --whitelist=ABCD --subset=*.ttf
+glyphhanger --whitelist=ABCD --subset=*.ttf
 ```
 
 #### Converting unicode ranges and back again
 
 ```sh
 # Convert a string to a unicode-range
-> glyphhanger --whitelist=ABCD
-> glyphhanger --US_ASCII
-> glyphhanger --US_ASCII --whitelist=ABCD
+glyphhanger --whitelist=ABCD
+glyphhanger --US_ASCII
+glyphhanger --US_ASCII --whitelist=ABCD
 
 # Convert a unicode-range to a string
-> glyphhanger --whitelist=U+41-44 --string
+glyphhanger --whitelist=U+41-44 --string
 ```
 
 ### Use the spider to gather URLs from links
@@ -159,12 +180,12 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 Finds all the `<a href>` elements on the page with *local* (not external) links and adds those to the glyphhanger URLs. If you specify `--spider-limit`, `--spider` is assumed.
 
 ```sh
-> glyphhanger ./test.html --spider
-> glyphhanger ./test.html --spider-limit
-> glyphhanger ./test.html --spider-limit=10
+glyphhanger ./test.html --spider
+glyphhanger ./test.html --spider-limit
+glyphhanger ./test.html --spider-limit=10
 
 # No limit
-> glyphhanger ./test.html --spider-limit=0
+glyphhanger ./test.html --spider-limit=0
 ```
 
 Default `--spider-limit` is 10. Set to `0` for no limit. This will greatly affect how long the task takes.
@@ -174,7 +195,7 @@ Default `--spider-limit` is 10. Set to `0` for no limit. This will greatly affec
 Make your output even smaller by only subsetting characters that are visible on the page.
 
 ```sh
-> glyphhanger ./test.html --onlyVisible
+glyphhanger ./test.html --onlyVisible
 ```
 
 ### Only search your page for text matching a CSS selector
@@ -182,28 +203,12 @@ Make your output even smaller by only subsetting characters that are visible on 
 Limit results to text inside of elements that match a CSS selector
 
 ```sh
-> glyphhanger ./test.html --cssSelector="pre, #header, .popUp". If paired with `--onlyVisible`, it will only return elements that are both visible and match the selector
+glyphhanger ./test.html --cssSelector="pre, #header, .popUp". If paired with `--onlyVisible`, it will only return elements that are both visible and match the selector
 ```
 
-### Installing `pyftsubset`
+## Enhancement Queue
 
-See [https://github.com/fonttools/fonttools](https://github.com/fonttools/fonttools).
-
-```
-pip install fonttools
-
-# Additional installation for --flavor=woff2
-git clone https://github.com/google/brotli
-cd brotli
-python setup.py install
-
-# Additional installation for --flavor=woff --with-zopfli
-git clone https://github.com/anthrotype/py-zopfli
-cd py-zopfli
-git submodule update --init --recursive
-python setup.py install
-```
-
+* [Top Voted Issues](https://github.com/filamentgroup/glyphhanger/issues?q=label%3Aneeds-votes+sort%3Areactions-%2B1-desc)
 
 ## Testing
 
