@@ -50,7 +50,7 @@
 				}.bind( this )).forEach( function( textNode ) {
 					var fontFamily = this.getFontFamilyNameFromNode( textNode, null );
 					var text = this.getNodeValue( textNode );
-					console.log( "font-family `" + fontFamily + "` has text: ", text );
+					// console.log( "font-family `" + fontFamily + "` has text: ", text );
 
 					this.saveGlyphs( text, fontFamily );
 				}.bind( this ));
@@ -58,14 +58,14 @@
 				var beforeContent = this.getPseudoContent(node, ":before");
 				if( beforeContent ) {
 					var beforeFamily = this.getFontFamilyNameFromNode( node, ":before" );
-					console.log( "(:before) font-family `" + beforeFamily + "` has text: ", beforeContent );
+					// console.log( "(:before) font-family `" + beforeFamily + "` has text: ", beforeContent );
 					this.saveGlyphs(beforeContent, beforeFamily);
 				}
 
 				var afterContent = this.getPseudoContent(node, ":after");
 				if( afterContent ) {
 					var afterFamily = this.getFontFamilyNameFromNode( node, ":after" );
-					console.log( "(:after) font-family `" + afterFamily + "` has text: ", afterContent );
+					// console.log( "(:after) font-family `" + afterFamily + "` has text: ", afterContent );
 					this.saveGlyphs(afterContent, afterFamily);
 				}
 			}.bind( this ));
@@ -118,7 +118,7 @@
 		var fontFamilyList;
 		if( context ) {
 			var fontFamily = this.win.getComputedStyle( context, pseudo ).getPropertyValue( "font-family" );
-			console.log( "node font-family:", fontFamily, "fallback to", this.defaultFontFamily );
+			// console.log( "node font-family:", fontFamily, "fallback to", this.defaultFontFamily );
 			fontFamilyList = fontFamily || this.defaultFontFamily;
 		}
 		return this.getFontFamilyName( fontFamilyList );
