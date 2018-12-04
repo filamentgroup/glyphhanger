@@ -1,6 +1,6 @@
 # glyphhanger
 
-Your web font utility belt. It shows what unicode-ranges are used on a web site (optionally for a font-family or for each font-family). It can also subset web fonts. It makes julienne fries.
+Your web font utility belt. It can subset web fonts. It can show you what unicode-ranges are used on a web site (optionally per font-family). It can also subset web fonts automatically using the unicode-ranges it found. It makes julienne fries.
 
 ## Installation
 
