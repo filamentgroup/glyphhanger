@@ -115,6 +115,7 @@ class GlyphHanger {
 	async _getPage(url) {
 		let browser = await this.getBrowser();
 		let page = await browser.newPage();
+		page.setBypassCSP(true);
 
 		try {
 			let response = await page.goto(url, {
