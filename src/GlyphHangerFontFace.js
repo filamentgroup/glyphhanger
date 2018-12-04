@@ -70,7 +70,7 @@ ${content.join("\n")}
 	}
 
 	writeCSSFiles() {
-		if(!this.subset) {
+		if(!this.subset || !this.cssOutput) {
 			return;
 		}
 

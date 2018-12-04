@@ -61,7 +61,7 @@ if( argv.subset ) {
 // glyphhanger --subset=*.ttf --US_ASCII										(reduce to US_ASCII characters)
 // glyphhanger --subset=*.ttf --US_ASCII --whitelist=ABCD		(reduce to US_ASCII union with whitelist)
 // glyphhanger --family='My Serif'													(outputs results for specific family)
-// glyphhanger --family='My Serif' -css											(outputs results for specific family with a font-face block)
+// glyphhanger --family='My Serif' --css										(outputs results for specific family with a font-face block)
 // glyphhanger --subset=*.ttf --family='My Serif'						(subset group of fonts to results for specific family)
 // glyphhanger --subset=*.ttf --family='My Serif' -css			(subset group of fonts to results for specific family and a font-face block)
 // glyphhanger --subset=*.ttf --output=dist/								(change the output directory for subset files)
