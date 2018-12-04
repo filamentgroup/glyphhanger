@@ -148,7 +148,7 @@ class GlyphHanger {
 		});
 
 		await page.addScriptTag({
-			path: path.resolve(__dirname, "../node_modules/characterset/lib/characterset.js")
+			path: require.resolve("characterset")
 		});
 
 		await page.addScriptTag({
