@@ -87,7 +87,7 @@ class GlyphHanger {
 
 	getUniversalSet() {
 		return this.sets['*'];
-	};
+	}
 
 	getSetForFamilies(families) {
 		if( typeof families === "string" ) {
