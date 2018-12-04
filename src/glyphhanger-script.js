@@ -35,7 +35,6 @@
 						return;
 					}
 				}
-
 				if( opts.onlyVisible && !(node.offsetWidth || node.offsetHeight || node.getClientRects().length) ) {
 					return;
 				}
@@ -132,17 +131,19 @@
 		}
 
 		if( node.parentNode ) {
-			var textTransform = this.win.getComputedStyle( node.parentNode ).getPropertyValue( "text-transform" );
-			// console.log( "textTransform:", textTransform );
-			switch (textTransform) {
-				case "uppercase":
-					return value.toUpperCase();
-				case "lowercase":
-					return value.toLowerCase();
-				case "capitalize":
-					// workaround language specific rules with text-transform
-					// "ß".toUpperCase() => "SS" in german, for example
-					return value.toUpperCase() + value.toLowerCase();
+			var style = this.win.getComputedStyle( node.parentNode );
+			var textTransform = style.getPropertyValue( "text-transform" );
+			// More information on small-caps at issue #51
+			var fontVariant = style.getPropertyValue( "font-variant" );
+
+			if( fontVariant === "small-caps" || textTransform === "capitalize" ) {
+				// workaround language specific rules with text-transform
+				// "ß".toUpperCase() => "SS" in german, for example
+				return value.toUpperCase() + value.toLowerCase();
+			} else if( textTransform === "uppercase" ) {
+				return value.toUpperCase();
+			} else if( textTransform === "lowercase" ) {
+				return value.toLowerCase();
 			}
 		}
 

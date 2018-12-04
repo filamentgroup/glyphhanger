@@ -14,7 +14,7 @@ describe( "Integration test", function() {
 		});
 	});
 
-	it( "should have work with text-transform: uppercase", function( done ) {
+	it( "should work with text-transform: uppercase", function( done ) {
 		this.timeout( 10000 );
 
 		var gh = new GlyphHanger();
@@ -26,7 +26,7 @@ describe( "Integration test", function() {
 		});
 	});
 
-	it( "should have work with text-transform: capitalize", function( done ) {
+	it( "should work with text-transform: capitalize", function( done ) {
 		this.timeout( 10000 );
 
 		var gh = new GlyphHanger();
@@ -38,7 +38,19 @@ describe( "Integration test", function() {
 		});
 	});
 
-	it( "should have work with onload and DOMContentLoaded content", function( done ) {
+	it( "should work with font-variant: small-caps", function( done ) {
+		this.timeout( 10000 );
+
+		var gh = new GlyphHanger();
+		gh.fetchUrls(["test/small-caps.html"]).then(function(result) {
+			// abc ^d e => abcDe => Dabcde
+			assert.equal( gh.getUniversalSet().toString(), "Dabcde" );
+
+			done();
+		});
+	});
+
+	it( "should work with onload and DOMContentLoaded content", function( done ) {
 		this.timeout( 10000 );
 
 		var gh = new GlyphHanger();
