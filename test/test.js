@@ -1,8 +1,7 @@
 const assert = require( "assert" );
-const path = require( "path" );
 const jsdom = require("jsdom");
-const GlyphHanger = require( "../src/GlyphHanger" );
 const { JSDOM } = jsdom;
+const GlyphHanger = require( "../src/GlyphHanger" );
 const window = (new JSDOM(`<!doctype html><html><body></body></html>`)).window;
 const document = window.document;
 

@@ -69,7 +69,7 @@
 				}
 			}.bind( this ));
 		}
-	}
+	};
 
 	GH.prototype.getPseudoContent = function(node, pseudo) {
 		if(!pseudo) {

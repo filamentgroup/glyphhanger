@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 var argv = require( "minimist" )( process.argv.slice(2) );
 var GlyphHanger = require( "./src/GlyphHanger" );
-var GlyphHangerFormat = require( "./src/GlyphHangerFormat" );
 var GlyphHangerWhitelist = require( "./src/GlyphHangerWhitelist" );
 var GlyphHangerSubset = require( "./src/GlyphHangerSubset" );
 var GlyphHangerFontFace = require( "./src/GlyphHangerFontFace" );
@@ -23,6 +22,9 @@ gh.setFamilies( argv.family );
 gh.setTimeout( argv.timeout );
 gh.setVisibilityCheck( argv.onlyVisible );
 gh.setCSSSelector( argv.cssSelector );
+if( argv.jsdom ) {
+	gh.setEnvironmentJSDOM();
+}
 
 var subset = new GlyphHangerSubset();
 subset.setOutputDirectory(argv.output);
@@ -89,12 +91,12 @@ if( argv.version ) {
 		}
 
 		gh.output();
-
 		try {
 			fontface.setUnicodeRange( gh.getUnicodeRange() );
 			fontface.writeCSSFiles();
 		} catch(e) {
 			console.log("GlyphHangerFontFace Error: ", e);
+			process.exit(1);
 		}
 
 		try {
@@ -103,13 +105,17 @@ if( argv.version ) {
 			}
 		} catch(e) {
 			console.log("GlyphHangerSubset Error: ", e);
+			process.exit(1);
 		}
 
 		try {
 			fontface.output();
 		} catch(e) {
 			console.log("GlyphHangerFontFace Error: ", e);
+			process.exit(1);
 		}
+
+		process.exit();
 	})();
 } else { // not using URLs
 	if( argv.subset ) {
@@ -119,6 +125,7 @@ if( argv.version ) {
 			// --subset with or without --whitelist
 			subset.subsetAll( !whitelist.isEmpty() ? whitelist.getWhitelistAsUnicodes() : whitelist.getUniversalRangeAsUnicodes() );
 		} catch(e) {
+			process.exitCode = 1;
 			console.log("GlyphHangerSubset Error: ", e);
 		}
 
@@ -129,6 +136,7 @@ if( argv.version ) {
 			fontface.writeCSSFiles();
 			fontface.output();
 		} catch(e) {
+			process.exitCode = 1;
 			console.log("GlyphHangerFontFace Error: ", e);
 		}
 	} else if( !whitelist.isEmpty() ) {
@@ -140,6 +148,7 @@ if( argv.version ) {
 			fontface.writeCSSFiles();
 			fontface.output();
 		} catch(e) {
+			process.exitCode = 1;
 			console.log("GlyphHangerFontFace Error: ", e);
 		}
 	} else {

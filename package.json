@@ -39,7 +39,7 @@
     "shelljs": "^0.7.8"
   },
   "devDependencies": {
-    "jsdom": "^11.5.1",
+    "jsdom": "^13.0.0",
     "mocha": "^4.0.1"
   }
 }

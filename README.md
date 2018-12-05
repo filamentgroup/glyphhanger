@@ -55,6 +55,9 @@ glyphhanger ./test.html --json
 # show results only for one or more font-family names
 glyphhanger ./test.html --family='Open Sans, Roboto'
 
+# use much faster jsdom mode instead of headless Chrome
+glyphhanger ./test.html --jsdom
+
 # Show version
 glyphhanger --version
 
@@ -209,6 +212,13 @@ Limit results to text inside of elements that match a CSS selector
 glyphhanger ./test.html --cssSelector="pre, #header, .popUp". If paired with `--onlyVisible`, it will only return elements that are both visible and match the selector
 ```
 
+### Advanced: use `jsdom` Mode ⚠️
+
+JSDOM mode can be useful running against static pages that don’t use a lot of JavaScript generated content. While JSDOM mode can handle some JavaScript generated content, Puppeteer mode should be the safest method for most use cases.
+
+JSDOM mode will also be much faster when running against files on a local filesystem rather than URL targets.
+
+Read more about [the difference between JSDOM and a full headless browser](https://github.com/jsdom/jsdom/wiki/jsdom-vs.-PhantomJS) (like the default mode that glyphhanger uses: Puppeteer/headless Chrome).
 
 ## Troubleshooting
 

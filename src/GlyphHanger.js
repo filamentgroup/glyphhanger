@@ -1,11 +1,9 @@
 const chalk = require( "chalk" );
-const path = require( "path" );
-const puppeteer = require('puppeteer');
 const CharacterSet = require( "characterset" );
 const WebServer = require( "./WebServer" );
 const GlyphHangerWhitelist = require( "./GlyphHangerWhitelist" );
+const GlyphHangerEnvironment = require( "./GlyphHangerEnvironment" );
 const debug = require("debug")("glyphhanger");
-const debugNodes = require("debug")("glyphhanger:nodes");
 
 class GlyphHanger {
 	constructor() {
@@ -16,14 +14,11 @@ class GlyphHanger {
 		this.timeout = 30000;
 		this.onlyVisible = false;
 		this.whitelist = new GlyphHangerWhitelist();
+		this.env = new GlyphHangerEnvironment();
 	}
 
-	async getBrowser() {
-		if( !this.browser ) {
-			this.browser = await puppeteer.launch();
-		}
-
-		return this.browser;
+	setEnvironmentJSDOM() {
+		this.env.setEnvironment("jsdom");
 	}
 
 	setSubset( subset ) {
@@ -112,74 +107,24 @@ class GlyphHanger {
 		return set;
 	}
 
-	async _getPage(url) {
-		let browser = await this.getBrowser();
-		let page = await browser.newPage();
-		page.setBypassCSP(true);
-
-		try {
-			let response = await page.goto(url, {
-				waitUntil: ["load", "networkidle0"],
-				timeout: this.timeout
-			});
-
-			let statusCode = response.status();
-
-			if ( statusCode !== 200 ) {
-				console.log(chalk.yellow(`Warning: ${url} had a non 200 HTTP status code: (${statusCode})`));
-			}
-
-			return page;
-		} catch(e) {
-			console.log(chalk.red(`Error with ${url}:`), e);
-		}
+	getOptions() {
+		return {
+			className: this.className,
+			onlyVisible: this.onlyVisible,
+			cssSelector: this.cssSelector
+		};
 	}
 
 	async _fetchUrl( url ) {
 		debug( "requesting: %o", url );
 
-		let page = await this._getPage(url);
+		let page = await this.env.getPage(url);
 
 		if(!page) {
 			return false;
 		}
-
-		page.on("console", function(msg) {
-			debugNodes("(headless browser console): %o", msg.text());
-		});
-
-		await page.addScriptTag({
-			path: require.resolve("characterset")
-		});
-
-		await page.addScriptTag({
-			path: path.resolve(__dirname, "../src/glyphhanger-script.js")
-		});
-
-		// debugNodes("Full document.body.innerHTML:");
-		// debugNodes(await page.evaluate( function() {
-		// 	return document.body.innerHTML;
-		// }));
-
-		let json = await page.evaluate( function(docClassName, opts) {
-			if(docClassName && docClassName !== "undefined") {
-				// add to both the documentElement and document.body because why not
-				document.documentElement.className += " " + docClassName;
-
-				if( "body" in document ) {
-					document.body.className += " " + docClassName;
-				}
-			}
-
-			var hanger = new GlyphHanger();
-			hanger.init( document.body, opts );
-
-			return hanger.toJSON();
-    }, this.className, {
-      onlyVisible: this.onlyVisible,
-      cssSelector: this.cssSelector
-    }
-    );
+		let options = this.getOptions();
+		let json = await this.env.getResults(page, options);
 
 		debug("Adding to set for %o: %o", url, json);
 		this.addToSets(json);
@@ -190,14 +135,18 @@ class GlyphHanger {
 		for( let url of urls ) {
 			debug("WebServer.isValidUrl(%o)", url);
 
-			if(!WebServer.isValidUrl(url) || url.indexOf('http://localhost:') === 0 ) {
-				if( !this.staticServer ) {
-					debug("Creating static server");
-					this.staticServer = await WebServer.getStaticServer();
+			let urlStr = url;
+			if(this.env.requiresWebServer()) {
+				if(!WebServer.isValidUrl(url) || url.indexOf('http://localhost:') === 0 ) {
+					if( !this.staticServer ) {
+						debug("Creating static server");
+						this.staticServer = await WebServer.getStaticServer();
+					}
 				}
+
+				urlStr = WebServer.getUrl(url);
 			}
 
-			let urlStr = WebServer.getUrl(url);
 			if( (await this._fetchUrl(urlStr)) === false ) {
 				failCount++;
 			}
@@ -207,11 +156,12 @@ class GlyphHanger {
 			console.log( chalk.red( `${failCount} of ${urls.length} urls failed.` ) );
 		}
 
-		let browser = await this.getBrowser();
-		await browser.close();
+		await this.env.close();
 
-		debug("Closing static server");
-		WebServer.close(this.staticServer);
+		if(this.env.requiresWebServer()) {
+			debug("Closing static server");
+			WebServer.close(this.staticServer);
+		}
 	}
 
 	getOutputForSet(set) {
