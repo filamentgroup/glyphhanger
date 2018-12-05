@@ -4,7 +4,7 @@
   "description": "A tool to ease webfont subsetting.",
   "main": "src/GlyphHanger.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --exit"
   },
   "repository": {
     "type": "git",
