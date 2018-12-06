@@ -96,7 +96,7 @@ if( argv.version ) {
 			fontface.writeCSSFiles();
 		} catch(e) {
 			console.log("GlyphHangerFontFace Error: ", e);
-			process.exit(1);
+			process.exitCode = 1;
 		}
 
 		try {
@@ -105,17 +105,15 @@ if( argv.version ) {
 			}
 		} catch(e) {
 			console.log("GlyphHangerSubset Error: ", e);
-			process.exit(1);
+			process.exitCode = 1;
 		}
 
 		try {
 			fontface.output();
 		} catch(e) {
 			console.log("GlyphHangerFontFace Error: ", e);
-			process.exit(1);
+			process.exitCode = 1;
 		}
-
-		process.exit();
 	})();
 } else { // not using URLs
 	if( argv.subset ) {

@@ -166,11 +166,14 @@ class GlyphHangerEnvironment {
 	}
 
 	get env() {
-		if(this.envStr === "jsdom") {
-			this._env = new JSDOMEnvironment();
-		} else {
-			this._env = new PuppeteerEnvironment();
+		if( !this._env ) {
+			if(this.envStr === "jsdom") {
+				this._env = new JSDOMEnvironment();
+			} else {
+				this._env = new PuppeteerEnvironment();
+			}
 		}
+
 		return this._env;
 	}
 
