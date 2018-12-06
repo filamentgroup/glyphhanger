@@ -1,10 +1,10 @@
 {
   "name": "glyphhanger",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "A tool to ease webfont subsetting.",
   "main": "src/GlyphHanger.js",
   "scripts": {
-    "test": "mocha --exit"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
     "fs-extra": "^5.0.0",
     "get-stdin": "^6.0.0",
     "glob": "^7.1.2",
+    "jsdom": "^13.0.0",
     "minimist": "^1.2.0",
     "parse-filepath": "^1.0.2",
     "rsvp": "^4.7.0",
@@ -40,7 +41,6 @@
     "shelljs": "^0.7.8"
   },
   "devDependencies": {
-    "jsdom": "^13.0.0",
     "mocha": "^4.0.1"
   }
 }
