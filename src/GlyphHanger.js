@@ -115,11 +115,15 @@ class GlyphHanger {
 		};
 	}
 
+	setStandardInput(standardInput) {
+		this.standardInput = standardInput;
+		this.env.setStandardInput(this.standardInput);
+	}
+
 	async _fetchUrl( url ) {
 		debug( "requesting: %o", url );
 
 		let page = await this.env.getPage(url);
-
 		if(!page) {
 			return false;
 		}
@@ -132,23 +136,34 @@ class GlyphHanger {
 
 	async fetchUrls( urls ) {
 		let failCount = 0;
-		for( let url of urls ) {
-			debug("WebServer.isValidUrl(%o)", url);
+		if( !urls.length && this.standardInput ) {
+			if( !this.env.isJSDOM() ) {
+				throw new Error("Standard input mode requires using --jsdom");
+			}
+			let result = await this._fetchUrl();
+			if( result === false ) {
+				failCount++;
+			}
+		} else {
+			for( let url of urls ) {
+				debug("WebServer.isValidUrl(%o)", url);
 
-			let urlStr = url;
-			if(this.env.requiresWebServer()) {
-				if(!WebServer.isValidUrl(url) || url.indexOf('http://localhost:') === 0 ) {
-					if( !this.staticServer ) {
-						debug("Creating static server");
-						this.staticServer = await WebServer.getStaticServer();
+				let urlStr = url;
+				if(this.env.requiresWebServer()) {
+					if(!WebServer.isValidUrl(url) || url.indexOf('http://localhost:') === 0 ) {
+						if( !this.staticServer ) {
+							debug("Creating static server");
+							this.staticServer = await WebServer.getStaticServer();
+						}
 					}
+
+					urlStr = WebServer.getUrl(url);
 				}
 
-				urlStr = WebServer.getUrl(url);
-			}
-
-			if( (await this._fetchUrl(urlStr)) === false ) {
-				failCount++;
+				let result = await this._fetchUrl(urlStr);
+				if( result === false ) {
+					failCount++;
+				}
 			}
 		}
 

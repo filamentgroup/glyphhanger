@@ -31,6 +31,7 @@
     "debug": "^3.1.0",
     "filesize": "^3.5.11",
     "fs-extra": "^5.0.0",
+    "get-stdin": "^6.0.0",
     "glob": "^7.1.2",
     "minimist": "^1.2.0",
     "parse-filepath": "^1.0.2",

@@ -1,10 +1,12 @@
 #!/usr/bin/env node
-var argv = require( "minimist" )( process.argv.slice(2) );
-var GlyphHanger = require( "./src/GlyphHanger" );
-var GlyphHangerWhitelist = require( "./src/GlyphHangerWhitelist" );
-var GlyphHangerSubset = require( "./src/GlyphHangerSubset" );
-var GlyphHangerFontFace = require( "./src/GlyphHangerFontFace" );
-var MultipleSpiderPigs = require( "./src/MultipleUrlSpiderPig" );
+const argv = require( "minimist" )( process.argv.slice(2) );
+const chalk = require("chalk");
+const getStdin = require("get-stdin");
+const GlyphHanger = require( "./src/GlyphHanger" );
+const GlyphHangerWhitelist = require( "./src/GlyphHangerWhitelist" );
+const GlyphHangerSubset = require( "./src/GlyphHangerSubset" );
+const GlyphHangerFontFace = require( "./src/GlyphHangerFontFace" );
+const MultipleSpiderPigs = require( "./src/MultipleUrlSpiderPig" );
 const debug = require( "debug" )( "glyphhanger:cli" );
 
 var whitelist = new GlyphHangerWhitelist( argv.w || argv.whitelist, {
@@ -68,26 +70,34 @@ if( argv.subset ) {
 // glyphhanger --subset=*.ttf --family='My Serif' -css			(subset group of fonts to results for specific family and a font-face block)
 // glyphhanger --subset=*.ttf --output=dist/								(change the output directory for subset files)
 
-if( argv.version ) {
-	var pkg = require( "./package.json" );
-	console.log( pkg.version );
-} else if( argv.help ) {
-	gh.outputHelp();
-} else if( argv._ && argv._.length ) {
-	(async function() {
+(async function() {
+	let standardInput = (await getStdin()).trim();
+	gh.setStandardInput(standardInput);
+
+	if( argv.version ) {
+		var pkg = require( "./package.json" );
+		console.log( pkg.version );
+	} else if( argv.help ) {
+		gh.outputHelp();
+	} else if( argv._ && argv._.length || standardInput ) {
 		// Spider
-		if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
-			let sp = new MultipleSpiderPigs();
-			sp.setLimit(argv[ 'spider-limit' ]);
-			await sp.fetchUrls(argv._);
+		try {
+			if( argv.spider || argv[ 'spider-limit' ] || argv[ 'spider-limit' ] === 0 ) {
+				let sp = new MultipleSpiderPigs();
+				sp.setLimit(argv[ 'spider-limit' ]);
+				await sp.fetchUrls( argv._ );
 
-			let urls = sp.getUrlsWithLimit();
-			await sp.finish();
-			debug( "Urls (after limit): %o", urls );
+				let urls = sp.getUrlsWithLimit();
+				await sp.finish();
+				debug( "Urls (after limit): %o", urls );
 
-			await gh.fetchUrls( urls );
-		} else {
-			await gh.fetchUrls( argv._ );
+				await gh.fetchUrls( urls );
+			} else {
+				await gh.fetchUrls( argv._ );
+			}
+		} catch(e) {
+			console.log(chalk.red("GlyphHanger Fetch Error: "), e);
+			process.exitCode = 1;
 		}
 
 		gh.output();
@@ -95,7 +105,7 @@ if( argv.version ) {
 			fontface.setUnicodeRange( gh.getUnicodeRange() );
 			fontface.writeCSSFiles();
 		} catch(e) {
-			console.log("GlyphHangerFontFace Error: ", e);
+			console.log(chalk.red("GlyphHangerFontFace Error: "), e);
 			process.exitCode = 1;
 		}
 
@@ -104,53 +114,53 @@ if( argv.version ) {
 				subset.subsetAll( gh.getUnicodeRange() );
 			}
 		} catch(e) {
-			console.log("GlyphHangerSubset Error: ", e);
+			console.log(chalk.red("GlyphHangerSubset Error: "), e);
 			process.exitCode = 1;
 		}
 
 		try {
 			fontface.output();
 		} catch(e) {
-			console.log("GlyphHangerFontFace Error: ", e);
+			console.log(chalk.red("GlyphHangerFontFace Error: "), e);
 			process.exitCode = 1;
 		}
-	})();
-} else { // not using URLs
-	if( argv.subset ) {
-		gh.output();
+	} else { // not using URLs
+		if( argv.subset ) {
+			gh.output();
 
-		try {
-			// --subset with or without --whitelist
-			subset.subsetAll( !whitelist.isEmpty() ? whitelist.getWhitelistAsUnicodes() : whitelist.getUniversalRangeAsUnicodes() );
-		} catch(e) {
-			process.exitCode = 1;
-			console.log("GlyphHangerSubset Error: ", e);
-		}
-
-		try {
-			if(!whitelist.isEmpty()) {
-				fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
+			try {
+				// --subset with or without --whitelist
+				subset.subsetAll( !whitelist.isEmpty() ? whitelist.getWhitelistAsUnicodes() : whitelist.getUniversalRangeAsUnicodes() );
+			} catch(e) {
+				process.exitCode = 1;
+				console.log(chalk.red("GlyphHangerSubset Error: "), e);
 			}
-			fontface.writeCSSFiles();
-			fontface.output();
-		} catch(e) {
-			process.exitCode = 1;
-			console.log("GlyphHangerFontFace Error: ", e);
-		}
-	} else if( !whitelist.isEmpty() ) {
-		// not subsetting, just output the code points (can convert whitelist string to code points)
-		gh.outputUnicodes();
 
-		try {
-			fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
-			fontface.writeCSSFiles();
-			fontface.output();
-		} catch(e) {
-			process.exitCode = 1;
-			console.log("GlyphHangerFontFace Error: ", e);
+			try {
+				if(!whitelist.isEmpty()) {
+					fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
+				}
+				fontface.writeCSSFiles();
+				fontface.output();
+			} catch(e) {
+				process.exitCode = 1;
+				console.log(chalk.red("GlyphHangerFontFace Error: "), e);
+			}
+		} else if( !whitelist.isEmpty() ) {
+			// not subsetting, just output the code points (can convert whitelist string to code points)
+			gh.outputUnicodes();
+
+			try {
+				fontface.setUnicodeRange( whitelist.getWhitelistAsUnicodes());
+				fontface.writeCSSFiles();
+				fontface.output();
+			} catch(e) {
+				process.exitCode = 1;
+				console.log(chalk.red("GlyphHangerFontFace Error: "), e);
+			}
+		} else {
+			gh.outputHelp();
 		}
-	} else {
-		gh.outputHelp();
+
 	}
-
-}
+})();

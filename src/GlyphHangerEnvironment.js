@@ -4,6 +4,7 @@ const fs = require( "fs-extra" );
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const puppeteer = require("puppeteer");
+const getStdin = require('get-stdin');
 const WebServer = require("./WebServer");
 const debugNodes = require("debug")("glyphhanger:nodes");
 
@@ -28,17 +29,32 @@ class JSDOMEnvironment {
 		return false;
 	}
 
-	async getPage(url) {
-		let isValidUrl = WebServer.isValidUrl(url);
-		let method = isValidUrl ? "fromURL" : "fromFile";
+	async getPage(url, standardInput) {
 		let options = {
 			runScripts: "dangerously",
 			// do we want to load subresources? leaving off for now
-			// resources: "usable"
-		};
-		if( !isValidUrl ) {
+			// resources: "usable",
+
 			// https://github.com/jsdom/jsdom/issues/2304
-			options.url = "http://localhost/";
+			url: "http://localhost/"
+		};
+
+		if( standardInput ) {
+			if( url ) {
+				console.log( chalk.yellow("A URL argument was passed but it was ignored. Using stdin instead.") );
+			}
+			if(standardInput.charAt(0) !== "<") {
+				standardInput = `<!doctype html><html><title></title><body>${standardInput}</body></html>`;
+			}
+
+			return new JSDOM(standardInput, options);
+		}
+
+		let isValidUrl = WebServer.isValidUrl(url);
+		let method = isValidUrl ? "fromURL" : "fromFile";
+		if( isValidUrl ) {
+			// see https://github.com/jsdom/jsdom/issues/2304 above
+			delete options.url;
 		}
 
 		let domPromise = JSDOM[method](url, options);
@@ -177,12 +193,20 @@ class GlyphHangerEnvironment {
 		return this._env;
 	}
 
+	isJSDOM() {
+		return this.envStr === "jsdom";
+	}
+
+	setStandardInput(value) {
+		this.standardInput = value;
+	}
+
 	requiresWebServer() {
 		return this.env.requiresWebServer();
 	}
 
 	async getPage(url) {
-		return this.env.getPage(url);
+		return this.env.getPage(url, this.standardInput);
 	}
 
 	async getResults(page, options) {

@@ -268,4 +268,22 @@ describe( "CLI (css)", function() {
 
 		assert.equal( output.toString().trim(), "U+20,U+61,U+63,U+65,U+67-69,U+6D-70,U+73,U+74" );
 	});
+
+	it( "System input and --jsdom", function () {
+		this.timeout( 10000 );
+		let output = childProcess.execSync(`echo "<b>ih</b>" | node cmd.js --jsdom --string`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "hi" );
+	});
+
+	it( "System input and --jsdom (not HTML, gets transformed to HTML for JSDOM)", function () {
+		this.timeout( 10000 );
+		let output = childProcess.execSync(`echo "ih" | node cmd.js --jsdom --string`, {
+			cwd: path.resolve(__dirname, "..")
+		});
+
+		assert.equal( output.toString().trim(), "hi" );
+	});
 });
