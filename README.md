@@ -235,7 +235,7 @@ echo "this is a test" | glyphhanger ./test.html --jsdom
 
 `npm test` will run the tests.
 
-Or, alternatively `./node_modules/mocha/bin/mocha` (or just `mocha` if you already have it installed globally with `npm install -g mocha`).
+Or, alternatively `npx mocha`.
 
 ## Enhancement Queue
 
