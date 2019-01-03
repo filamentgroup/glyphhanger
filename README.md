@@ -222,7 +222,7 @@ Read more about [the difference between JSDOM and a full headless browser](https
 glyphhanger ./test.html --jsdom
 
 # jsdom mode works with standard input too
-echo "this is a test" | glyphhanger ./test.html --jsdom
+echo "this is a test" | glyphhanger --jsdom
 ```
 
 ## Troubleshooting
