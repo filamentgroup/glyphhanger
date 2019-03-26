@@ -145,6 +145,15 @@ Writing CSS file: LatoLatin-Regular.css
 }
 ```
 
+#### Specify output directory for any files created with `--output`
+
+```sh
+> glyphhanger --subset=*.ttf --output=some/other/path
+
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff (was 145.06 KB, now 2.88 KB)
+Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 2.24 KB)
+```
+
 ### Whitelist Characters
 
 ```sh
