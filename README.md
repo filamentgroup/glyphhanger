@@ -72,14 +72,14 @@ Replaces `--verbose` in `v3.0.0`.
 
 ### Subset font files automatically
 
-Use `--subset=*.ttf` to select some font files for subsetting. Note that you can also [subset yourself manually with `pyftsubset`](docs/manual-subset.md) (but glyphhanger is easier).
+Use `--subset=*.ttf` to select some local font files for subsetting. Note that you can also [subset yourself manually with `pyftsubset`](docs/manual-subset.md) (but glyphhanger is easier).
 
 _Note that the `DEBUG` output documented above will log the specific `pyftsubset` command that `glyphhanger` used. Read more [about `pyftsubset` defaults](https://github.com/filamentgroup/glyphhanger/issues/49)._
 
 #### Just make optimized TTF/WOFF/WOFF2 files
 
 ```sh
-> glyphhanger --subset=*.ttf
+> glyphhanger --subset=./*.ttf
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 70.25 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 36.51 KB)
@@ -89,7 +89,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 #### Subset to specific characters only (no URLs)
 
 ```sh
-> glyphhanger --whitelist=ABCD --subset=*.ttf
+> glyphhanger --whitelist=ABCD --subset=./*.ttf
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 4.42 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 2.84 KB)
@@ -99,7 +99,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 #### Subset to the glyphs at a URL
 
 ```sh
-> glyphhanger ./test.html --subset=*.ttf
+> glyphhanger ./test.html --subset=./*.ttf
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 24 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 14.34 KB)
@@ -109,7 +109,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 #### Subset to the glyphs at a URL only using content that matches a specific font-family
 
 ```sh
-> glyphhanger ./test.html --subset=*.ttf --family='Lato,sans-serif'
+> glyphhanger ./test.html --subset=./*.ttf --family='Lato,sans-serif'
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.ttf (was 145.06 KB, now 24 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.zopfli.woff (was 145.06 KB, now 14.34 KB)
@@ -121,7 +121,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 Available formats: `ttf,woff,woff-zopfli,woff2`.
 
 ```sh
-> glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=*.ttf
+> glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=./*.ttf
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff (was 145.06 KB, now 2.88 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 2.24 KB)
@@ -132,7 +132,7 @@ Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 K
 Because we’re not parsing URLs for glyphs, we can optionally use `--family='My Family Name'` to set the name used in the `@font-face` block. Normally `--family` would tell GlyphHanger to only parse text data from nodes using one of the fonts listed in `--family`. Using `--subset` and `--css` together will write a CSS file, too.
 
 ```sh
-> glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=*.ttf --css
+> glyphhanger --whitelist=ABCD --formats=woff2,woff --subset=./*.ttf --css
 
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff (was 145.06 KB, now 2.88 KB)
 Subsetting LatoLatin-Regular.ttf to LatoLatin-Regular-subset.woff2 (was 145.06 KB, now 2.24 KB)
@@ -163,7 +163,7 @@ glyphhanger https://google.com --LATIN --whitelist=™
 
 #### Manual subsetting
 ```sh
-glyphhanger --whitelist=ABCD --subset=*.ttf
+glyphhanger --whitelist=ABCD --subset=./*.ttf
 ```
 
 #### Converting unicode ranges and back again
