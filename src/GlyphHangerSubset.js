@@ -23,6 +23,16 @@ class GlyphHangerSubset {
 		return this.outputDirectory;
 	}
 
+	setOutputSuffix( suffix ) {
+		if( suffix ) {
+			this.outputSuffix = suffix;
+		}
+	}
+
+	getOutputSuffix() {
+		return this.outputSuffix;
+	}
+
 	setFontFilesGlob( ttfFilesGlob ) {
 		this.fontPaths = glob.sync( ttfFilesGlob );
 	}
@@ -84,7 +94,8 @@ class GlyphHangerSubset {
 
 	getFilenameFromTTFPath( ttfPath, format, useZopfli ) {
 		var fontPath = parsePath( ttfPath );
-		var outputFilename = fontPath.name + "-subset" + ( useZopfli ? ".zopfli" : "" ) + ( format ? "." + format : fontPath.ext );
+		var suffix = this.getOutputSuffix() || "-subset";
+		var outputFilename = fontPath.name + suffix + ( useZopfli ? ".zopfli" : "" ) + ( format ? "." + format : fontPath.ext );
 		return outputFilename;
 	}
 
