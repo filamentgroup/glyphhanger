@@ -206,8 +206,10 @@ glyphhanger ./test.html --onlyVisible
 Limit results to text inside of elements that match a CSS selector
 
 ```sh
-glyphhanger ./test.html --cssSelector="pre, #header, .popUp". If paired with `--onlyVisible`, it will only return elements that are both visible and match the selector
+glyphhanger ./test.html --cssSelector="pre, #header, .popUp"
 ```
+
+If paired with `--onlyVisible`, it will only return elements that are both visible and match the selector
 
 ### Advanced: `jsdom` Mode ⚠️
 
