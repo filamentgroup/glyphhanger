@@ -31,6 +31,8 @@ git submodule update --init --recursive
 python setup.py install
 ```
 
+If you want to read an in-depth tutorial on the installation steps above, please read [How I set up Glyphhanger on macOS for optimizing and converting font files for the Web](https://www.sarasoueidan.com/blog/glyphhanger/) by Sara Soueidan.
+
 ## Usage
 
 ### Find the glyphs in a local file or url
