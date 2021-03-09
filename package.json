@@ -38,7 +38,7 @@
     "parse-filepath": "^1.0.2",
     "rsvp": "^4.7.0",
     "serve-static": "^1.13.2",
-    "shelljs": "^0.7.8"
+    "shelljs": "^0.8.4"
   },
   "devDependencies": {
     "mocha": "^4.0.1"
