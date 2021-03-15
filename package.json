@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/filamentgroup/glyphhanger.git"
+    "url": "git+https://github.com/zachleat/glyphhanger.git"
   },
   "author": {
     "name": "Zach Leatherman",
@@ -17,9 +17,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/filamentgroup/glyphhanger/issues"
+    "url": "https://github.com/zachleat/glyphhanger/issues"
   },
-  "homepage": "https://github.com/filamentgroup/glyphhanger#readme",
+  "homepage": "https://github.com/zachleat/glyphhanger#readme",
   "bin": {
     "glyphhanger": "./cmd.js"
   },

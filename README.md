@@ -49,7 +49,7 @@ glyphhanger ./test.html --string
 glyphhanger http://example.com
 
 # multiple URLs, optionally using HTTPS
-glyphhanger https://google.com https://www.filamentgroup.com
+glyphhanger https://google.com https://www.zachleat.com
 
 # show results for each font-family on the page
 glyphhanger ./test.html --json
@@ -235,15 +235,14 @@ echo "this is a test" | glyphhanger --jsdom
 
 ## Testing
 
-* Build Status: [![Build Status](https://travis-ci.org/filamentgroup/glyphhanger.svg?branch=master)](https://travis-ci.org/filamentgroup/glyphhanger)
-
 `npm test` will run the tests.
 
 Or, alternatively `npx mocha`.
 
 ## Enhancement Queue
 
-* [Top Voted Issues 👍](https://github.com/filamentgroup/glyphhanger/issues?q=label%3Aneeds-votes+sort%3Areactions-%2B1-desc)
+* [Top Voted Issues 👍](https://github.com/zachleat/glyphhanger/issues?q=label%3Aneeds-votes+sort%3Areactions-%2B1-desc)
+* Archived: [Voted Issues from `filamentgroup/glyphhanger`](https://github.com/filamentgroup/glyphhanger/issues?q=label%3Aneeds-votes+sort%3Areactions-%2B1-desc)
 
 ## Alternatives to GlyphHanger
 
