@@ -30,6 +30,7 @@ if( argv.jsdom ) {
 
 var subset = new GlyphHangerSubset();
 subset.setOutputDirectory(argv.output);
+subset.setOutputSuffix(argv.suffix);
 
 if( argv.formats ) {
 	subset.setFormats( argv.formats );
