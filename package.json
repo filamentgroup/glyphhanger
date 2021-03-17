@@ -1,6 +1,6 @@
 {
   "name": "glyphhanger",
-  "version": "3.2.0",
+  "version": "4.0.1",
   "description": "A tool to ease webfont subsetting.",
   "main": "src/GlyphHanger.js",
   "scripts": {
@@ -8,39 +8,38 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/filamentgroup/glyphhanger.git"
+    "url": "git+https://github.com/zachleat/glyphhanger.git"
   },
   "author": {
     "name": "Zach Leatherman",
-    "email": "zach@filamentgroup.com",
-    "url": "https://filamentgroup.com"
+    "email": "zachleatherman@gmail.com",
+    "url": "https://zachleat.com/"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/filamentgroup/glyphhanger/issues"
+    "url": "https://github.com/zachleat/glyphhanger/issues"
   },
-  "homepage": "https://github.com/filamentgroup/glyphhanger#readme",
+  "homepage": "https://github.com/zachleat/glyphhanger#readme",
   "bin": {
     "glyphhanger": "./cmd.js"
   },
   "dependencies": {
-    "@zachleat/spider-pig": "^1.0.3",
-    "chalk": "^2.3.0",
+    "@zachleat/spider-pig": "^2.0.0",
+    "chalk": "^4.1.0",
     "characterset": "^1.3.0",
-    "connect": "^3.6.6",
-    "debug": "^3.1.0",
-    "filesize": "^3.5.11",
-    "fs-extra": "^5.0.0",
-    "get-stdin": "^6.0.0",
-    "glob": "^7.1.2",
-    "jsdom": "^13.0.0",
-    "minimist": "^1.2.0",
+    "connect": "^3.7.0",
+    "debug": "^4.3.1",
+    "filesize": "^6.1.0",
+    "fs-extra": "^9.1.0",
+    "get-stdin": "^8.0.0",
+    "glob": "^7.1.6",
+    "jsdom": "^15.2.1",
+    "minimist": "^1.2.5",
     "parse-filepath": "^1.0.2",
-    "rsvp": "^4.7.0",
-    "serve-static": "^1.13.2",
-    "shelljs": "^0.7.8"
+    "serve-static": "^1.14.1",
+    "shelljs": "^0.8.4"
   },
   "devDependencies": {
-    "mocha": "^4.0.1"
+    "mocha": "^8.3.1"
   }
 }

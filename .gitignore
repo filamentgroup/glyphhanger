@@ -1,2 +1,3 @@
 node_modules
 test/fonts/ignored
+package-lock.json

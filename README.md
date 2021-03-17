@@ -31,6 +31,8 @@ git submodule update --init --recursive
 python setup.py install
 ```
 
+If you want to read an in-depth tutorial on the installation steps above, please read [How I set up Glyphhanger on macOS for optimizing and converting font files for the Web](https://www.sarasoueidan.com/blog/glyphhanger/) by Sara Soueidan.
+
 ## Usage
 
 ### Find the glyphs in a local file or url
@@ -47,7 +49,7 @@ glyphhanger ./test.html --string
 glyphhanger http://example.com
 
 # multiple URLs, optionally using HTTPS
-glyphhanger https://google.com https://www.filamentgroup.com
+glyphhanger https://google.com https://www.zachleat.com
 
 # show results for each font-family on the page
 glyphhanger ./test.html --json
@@ -206,8 +208,10 @@ glyphhanger ./test.html --onlyVisible
 Limit results to text inside of elements that match a CSS selector
 
 ```sh
-glyphhanger ./test.html --cssSelector="pre, #header, .popUp". If paired with `--onlyVisible`, it will only return elements that are both visible and match the selector
+glyphhanger ./test.html --cssSelector="pre, #header, .popUp"
 ```
+
+If paired with `--onlyVisible`, it will only return elements that are both visible and match the selector
 
 ### Advanced: `jsdom` Mode ⚠️
 
@@ -231,15 +235,14 @@ echo "this is a test" | glyphhanger --jsdom
 
 ## Testing
 
-* Build Status: [![Build Status](https://travis-ci.org/filamentgroup/glyphhanger.svg?branch=master)](https://travis-ci.org/filamentgroup/glyphhanger)
-
 `npm test` will run the tests.
 
 Or, alternatively `npx mocha`.
 
 ## Enhancement Queue
 
-* [Top Voted Issues 👍](https://github.com/filamentgroup/glyphhanger/issues?q=label%3Aneeds-votes+sort%3Areactions-%2B1-desc)
+* [Top Voted Issues 👍](https://github.com/zachleat/glyphhanger/issues?q=label%3Aneeds-votes+sort%3Areactions-%2B1-desc)
+* Archived: [Voted Issues from `filamentgroup/glyphhanger`](https://github.com/filamentgroup/glyphhanger/issues?q=label%3Aneeds-votes+sort%3Areactions-%2B1-desc)
 
 ## Alternatives to GlyphHanger
 
