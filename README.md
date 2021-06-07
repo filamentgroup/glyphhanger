@@ -35,6 +35,8 @@ If you want to read an in-depth tutorial on the installation steps above, please
 
 ## Usage
 
+_Related: operate on existing `unicode-range` values with [Unicode Range Interchange](https://www.zachleat.com/unicode-range-interchange/) ([read the blog post](https://www.zachleat.com/web/unicode-range-interchange/))._
+
 ### Find the glyphs in a local file or url
 
 ```sh
