@@ -24,7 +24,7 @@
     "glyphhanger": "./cmd.js"
   },
   "dependencies": {
-    "@zachleat/spider-pig": "^2.0.0",
+    "@zachleat/spider-pig": "zk-phi/spider-pig",
     "chalk": "^4.1.0",
     "characterset": "^1.3.0",
     "connect": "^3.7.0",
